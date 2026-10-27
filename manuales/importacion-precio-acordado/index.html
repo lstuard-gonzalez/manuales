@@ -1,0 +1,412 @@
+<title>Importaciones AMV</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: índice fijo a la izquierda en escritorio, columna de lectura de 760px; las capturas salen a 1040px. */
+:root {
+  --bg: #F7F5FA;          /* Snow */
+  --surface: #FFFFFF;
+  --card: #EEEAF2;        /* Mist */
+  --line: #E0DDE4;        /* Smoke */
+  --ink: #212121;
+  --ink-strong: #241b36;  /* Azul profundo */
+  --muted: #5f5873;
+  --accent: #ff8c00;      /* Naranja principal */
+  --accent-2: #fb6419;
+  --accent-ink: #b45a00;  /* naranja legible sobre claro */
+  --soft: #FFF3E0;
+  --ok: #1f7a4d;
+  --ok-soft: #e6f4ec;
+  --warn: #9a4a00;
+  --warn-soft: #fff3e0;
+  --bad: #b42318;
+  --bad-soft: #fdecea;
+  --font-display: 'Geist', 'Inter', 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Geist', 'Inter', 'Open Sans', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --shadow: 0 2px 8px rgba(36,27,54,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17121f; --surface: #1f1929; --card: #2a2236; --line: #3a3147;
+    --ink: #ebe7f2; --ink-strong: #ffffff; --muted: #a8a8c7;
+    --accent: #ff9d2e; --accent-2: #fb7a3a; --accent-ink: #ffb054; --soft: #33240f;
+    --ok: #6fd3a0; --ok-soft: #173326; --warn: #ffb054; --warn-soft: #33240f; --bad: #ff8f85; --bad-soft: #3a1b1a;
+    --shadow: 0 2px 8px rgba(0,0,0,0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17121f; --surface: #1f1929; --card: #2a2236; --line: #3a3147;
+  --ink: #ebe7f2; --ink-strong: #ffffff; --muted: #a8a8c7;
+  --accent: #ff9d2e; --accent-2: #fb7a3a; --accent-ink: #ffb054; --soft: #33240f;
+  --ok: #6fd3a0; --ok-soft: #173326; --warn: #ffb054; --warn-soft: #33240f; --bad: #ff8f85; --bad-soft: #3a1b1a;
+  --shadow: 0 2px 8px rgba(0,0,0,0.35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6; letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.topbar { height: 6px; background: var(--accent); }
+.wrap {
+  display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px;
+  max-width: 1360px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+}
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 14px; }
+nav.toc .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: var(--ink-strong); font-weight: 600; }
+nav.toc .brand img { width: 28px; height: 28px; border-radius: 6px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+nav.toc a { display: block; padding: 6px 10px; border-radius: 8px; color: var(--muted); text-decoration: none; }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--card); color: var(--ink-strong); outline: none; }
+nav.toc .sub a { padding-left: 22px; font-size: 13px; }
+main { min-width: 0; }
+.col { max-width: 760px; }
+header.cover { padding-bottom: 32px; border-bottom: 1px solid var(--line); margin-bottom: 40px; }
+.eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-ink); font-weight: 600; }
+h1 { font-family: var(--font-display); font-size: clamp(32px, 5vw, 44px); line-height: 1.12; letter-spacing: -0.02em; color: var(--ink-strong); margin: 8px 0 12px; text-wrap: balance; }
+.lede { font-size: 18px; color: var(--muted); max-width: 64ch; margin: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 20px; font-size: 13px; color: var(--muted); }
+.meta b { color: var(--ink); font-weight: 600; }
+section { padding-top: 16px; margin-bottom: 56px; scroll-margin-top: 24px; }
+h2 { font-family: var(--font-display); font-size: 28px; line-height: 1.2; color: var(--ink-strong); margin: 0 0 12px; text-wrap: balance; }
+h2 .n { color: var(--accent); margin-right: 10px; font-variant-numeric: tabular-nums; }
+h3 { font-family: var(--font-display); font-size: 20px; line-height: 1.3; color: var(--ink-strong); margin: 36px 0 8px; text-wrap: balance; scroll-margin-top: 24px; }
+p { margin: 0 0 14px; max-width: 68ch; }
+ul, ol { margin: 0 0 14px; padding-left: 22px; max-width: 68ch; }
+li { margin-bottom: 6px; }
+a { color: var(--accent-ink); }
+code, .mono { font-family: var(--font-mono); font-size: 0.88em; background: var(--card); padding: 1px 6px; border-radius: 4px; }
+.path { font-family: var(--font-body); font-weight: 600; color: var(--ink-strong); background: var(--card); padding: 2px 8px; border-radius: 6px; white-space: normal; }
+strong { color: var(--ink-strong); }
+
+figure { margin: 20px 0 28px; max-width: 1040px; }
+figure img { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); box-shadow: var(--shadow); background: #fff; }
+figcaption { font-size: 13px; line-height: 1.5; color: var(--muted); margin-top: 10px; max-width: 90ch; }
+figcaption .tag { font-weight: 600; color: var(--ink); }
+.marks { counter-reset: m; list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; font-size: 14px; }
+.marks li { position: relative; padding-left: 32px; margin: 0; min-height: 22px; }
+.marks li::before { counter-increment: m; content: counter(m); position: absolute; left: 0; top: 0; width: 22px; height: 22px; border-radius: 50%; background: #E8501B; color: #fff; font: 700 12px/22px var(--font-body); text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+.why { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 16px 0 20px; max-width: 760px; }
+.why .k { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--accent-ink); display: block; margin-bottom: 4px; }
+.why p:last-child { margin-bottom: 0; }
+
+.find { border-radius: 12px; padding: 16px 18px; margin: 14px 0; max-width: 760px; border: 1px solid var(--line); background: var(--surface); }
+.find .h { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 6px; }
+.find .h strong { font-size: 16px; }
+.pill { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.find p:last-child { margin-bottom: 0; }
+
+.tbl { overflow-x: auto; margin: 14px 0 22px; max-width: 1040px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; background: var(--card); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td .acc { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+
+.ledger { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 18px 0 24px; max-width: 1040px; }
+.entry { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.entry .when { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+.entry h4 { margin: 4px 0 10px; font-size: 16px; color: var(--ink-strong); font-family: var(--font-display); }
+.entry table { font-size: 13px; }
+.entry th, .entry td { padding: 7px 8px; }
+.entry .note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+.dr { color: var(--ink); } .cr { color: var(--muted); }
+
+.steps { list-style: none; padding: 0; counter-reset: st; display: grid; gap: 10px; max-width: 760px; }
+.steps > li { counter-increment: st; display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 12px; margin: 0; }
+.steps > li::before { content: counter(st); width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--accent); color: var(--accent-ink); font: 700 14px/26px var(--font-body); text-align: center; }
+
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin: 16px 0 22px; max-width: 1040px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-width: 0; }
+.kpi .l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.kpi .v { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--ink-strong); font-variant-numeric: tabular-nums; line-height: 1.25; margin-top: 4px; }
+.kpi .s { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.kpi.hi .v { color: var(--accent-ink); }
+
+.errs { display: grid; gap: 10px; max-width: 900px; margin: 14px 0; }
+.err { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.err > div { padding: 12px 14px; font-size: 14px; min-width: 0; }
+.err > div:first-child { background: var(--bad-soft); }
+.err > div:last-child { background: var(--ok-soft); }
+
+footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px; font-size: 13px; color: var(--muted); }
+
+@media (max-width: 980px) {
+  .wrap { grid-template-columns: minmax(0,1fr); gap: 24px; padding-block: 24px 64px; }
+  nav.toc { position: static; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+}
+@media (max-width: 640px) {
+  .ledger, .kpis, .err { grid-template-columns: minmax(0,1fr); }
+  h2 { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+@media print {
+  body { font-size: 10.5pt; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  figure img { max-height: 125mm; width: auto; max-width: 100%; margin: 0 auto; }
+  body::before, .topbar, nav.toc { display: none; }
+  .wrap { display: block; max-width: none; padding: 0; }
+  .col, p, ul, ol { max-width: none; }
+  header.cover { margin-bottom: 20px; }
+  section { margin-bottom: 20px; padding-top: 0; }
+  h2 { break-after: avoid; margin-top: 8px; }
+  h3 { break-after: avoid; margin-top: 18px; }
+  figure, .find, .entry, .err, .kpi, .why, .tbl, .steps > li, .ledger, .kpis { break-inside: avoid; }
+  figure { margin: 10px 0 16px; }
+  figure img { box-shadow: none; }
+  section#datos, section#p1, section#p3, section#resultado { break-before: page; }
+}
+</style>
+
+<div class="topbar"></div>
+<div class="wrap">
+  <nav class="toc" aria-label="Contenido">
+    <div class="brand"><img src="img/nikkosoft-isotipo.png" alt="NIKKOSOFT">Manual AMV</div>
+    <ol>
+      <li><a href="#caso">1. El caso y los tres documentos</a></li>
+      <li><a href="#datos">2. Datos del caso NORI</a></li>
+      <li><a href="#p1">3. Factura del proveedor</a></li>
+      <li><a href="#p2">4. Cruzar los anticipos</a></li>
+      <li><a href="#p3">5. Planilla de nacionalización</a></li>
+      <li><a href="#p4">6. Arancel y gastos</a></li>
+      <li><a href="#resultado">7. Resultado y control</a></li>
+      <li><a href="#errores">8. Errores comunes</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="cover col">
+      <div class="eyebrow">Alimentos MonteVerde C.A. · Odoo 19 Enterprise</div>
+      <h1>Importaciones: factura del proveedor, anticipos y nacionalización</h1>
+      <p class="lede">Cómo registrar la factura del proveedor del exterior por el precio acordado, cruzarla con los anticipos ya pagados y llevar al libro de compras los documentos de la nacionalización. Caso real: NORI, orden OC-00916.</p>
+      <div class="meta">
+        <span><b>Instancia</b> alimentos-monteverde.odoo.com</span>
+        <span><b>Capturas</b> 26/10/2026</span>
+        <span><b>Proveedor</b> NANTONG SAILING TRADING CO., LTD</span>
+        <span><b>Elaborado por</b> NIKKOSOFT Consultores C.A.</span>
+      </div>
+    </header>
+
+    <!-- 1 -->
+    <section id="caso">
+      <h2><span class="n">1</span>El caso y los tres documentos</h2>
+      <p>En una importación hay tres documentos distintos y cada uno cumple una función en Odoo. Separarlos evita el saldo pendiente al cruzar los pagos.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Documento</th><th>Para qué sirve</th><th>Diario</th><th>Libro de compras</th></tr></thead>
+          <tbody>
+            <tr><td><b>Factura del proveedor del exterior</b></td><td>Deuda con el proveedor por el precio acordado. Contra ella se cruzan los anticipos y pagos.</td><td>GASTOS NO FISCALES</td><td>No</td></tr>
+            <tr><td><b>Planilla de liquidación (nacionalización)</b></td><td>IVA de importación (crédito fiscal) con los datos de la planilla y el DUA.</td><td>FACTURAS PROVEEDORES</td><td>Sí, como importación</td></tr>
+            <tr><td><b>Arancel, tasas, agente y fletes</b></td><td>Gastos que suben el costo del inventario mediante costos en destino.</td><td>Según el proveedor</td><td>Según el documento</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why">
+        <span class="k">Por qué la factura del proveedor va en GASTOS NO FISCALES</span>
+        <p>Ese diario tiene marcado <b>Documento no fiscal</b>: sus facturas se registran, se pagan y se concilian como cualquier otra, pero no llevan número de control ni impuestos y no entran a los libros de compras y ventas. AMV ya lo usa para las facturas de las navieras de China.</p>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="datos">
+      <h2><span class="n">2</span>Datos del caso NORI</h2>
+      <h3>Orden de compra OC-00916</h3>
+      <figure>
+        <img src="img/30_oc_00916.webp" alt="Orden de compra OC-00916" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <ol class="marks">
+            <li><b>Subir factura</b>: crea la factura del proveedor adjuntando su PDF (ver 3.1).</li>
+            <li>Proveedor NANTONG SAILING TRADING CO., LTD.</li>
+            <li>Moneda USD.</li>
+            <li>5.280 cajas recibidas, 0 facturadas.</li>
+            <li>Precio unitario US$ 40,625.</li>
+            <li>Total US$ 214.500,00.</li>
+          </ol>
+        </figcaption>
+      </figure>
+      <h3>Recepción y costo en destino ya registrados</h3>
+      <figure>
+        <img src="img/20_recepcion_val_in_00044.webp" alt="Recepción VAL/IN/00044" loading="lazy" width="1600" height="1000">
+        <figcaption>Recepción <b>VAL/IN/00044</b> en estado Hecho (22/10/2026).</figcaption>
+      </figure>
+      <figure>
+        <img src="img/24_lc118_costos_adicionales.webp" alt="Costo en destino LC/2026/0118" loading="lazy" width="1600" height="1000">
+        <figcaption>Costo en destino <b>LC/2026/0118</b> validado: US$ 43.532,00 de gastos de importación sobre VAL/IN/00044. No se toca.</figcaption>
+      </figure>
+      <h3>Anticipos pagados a NANTONG</h3>
+      <p>Los pagos al proveedor ya están en Odoo como <b>anticipos</b> en la cuenta <code>2.1.02.002 CUENTAS POR PAGAR EXTERIOR</code>. Entraron con los saldos iniciales del 30/09/2026.</p>
+      <figure>
+        <img src="img/34_anticipos_nantong.webp" alt="Apuntes contables de anticipos de NANTONG" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <p><span class="tag">Contabilidad › Contabilidad › Apuntes contables</span>, filtrado por contacto NANTONG SAILING y cuenta 2.1.02.002.</p>
+          <ol class="marks">
+            <li>Referencia del anticipo en Profit (ADEL).</li>
+            <li>Débito en Bs a la tasa del día del pago.</li>
+            <li>Débito en US$.</li>
+          </ol>
+        </figcaption>
+      </figure>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Anticipo</th><th class="num">US$</th><th class="num">Bs</th><th>Uso</th></tr></thead>
+          <tbody>
+            <tr><td>ADEL 1023</td><td class="num">107.250,00</td><td class="num">64.600.149,90</td><td><b>OC-00916</b></td></tr>
+            <tr><td>ADEL 1128</td><td class="num">107.250,00</td><td class="num">91.006.537,05</td><td><b>OC-00916</b></td></tr>
+            <tr><td>ADEL 1102</td><td class="num">98.825,00</td><td class="num">81.801.118,91</td><td>Otra orden</td></tr>
+            <tr><td>ADEL 1022</td><td class="num">0,10</td><td class="num">60,01</td><td>Residuo</td></tr>
+            <tr><td><b>Total</b></td><td class="num"><b>313.325,10</b></td><td class="num"><b>237.407.865,87</b></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>ADEL 1023 + ADEL 1128 = <b>US$ 214.500,00</b>, el mismo total de OC-00916. Contabilidad debe confirmar que esos dos anticipos corresponden a esta orden.</p>
+      <figure>
+        <img src="img/31_partner_nantong.webp" alt="Contacto NANTONG SAILING" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <ol class="marks">
+            <li>NANTONG está registrado como <b>PNNR Persona Natural No Residente</b>.</li>
+            <li><b>Adeudado</b> 237.407.865,87 Bs: es el total de los anticipos.</li>
+          </ol>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- 3 -->
+    <section id="p1">
+      <h2><span class="n">3</span>Paso 1 · Factura del proveedor por el precio acordado</h2>
+      <h3>3.1 Crear la factura desde la orden de compra</h3>
+      <p>Hay que crearla desde la orden para que quede ligada a la recepción y Odoo actualice el costo del NORI. En Odoo 19 hay dos caminos:</p>
+      <ol class="steps">
+        <li><div><b>Desde la lista:</b> <span class="path">Compras › Órdenes › Órdenes de compra</span>, busca <code>OC-00916</code>, marca la casilla de la fila y pulsa <b>Crear facturas</b>.</div></li>
+        <li><div><b>Desde el formulario:</b> abre OC-00916 y pulsa <b>Subir factura</b> con el PDF de la factura del proveedor. Crea la misma factura con el PDF adjunto.</div></li>
+      </ol>
+      <figure>
+        <img src="img/32_lista_oc_crear_facturas.webp" alt="Lista de órdenes de compra con OC-00916 seleccionada" loading="lazy" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Botón <b>Crear facturas</b>.</li><li>OC-00916 seleccionada, estado de facturación «Facturas en espera».</li></ol></figcaption>
+      </figure>
+
+      <h3>3.2 Completar y confirmar la factura</h3>
+      <p>La factura se abre en borrador. Antes de confirmar:</p>
+      <ol class="steps">
+        <li><div><b>Diario: GASTOS NO FISCALES.</b> Si la factura trae otro diario, cámbialo antes de confirmar.</div></li>
+        <li><div><b>Referencia de factura:</b> número de la factura del proveedor. <b>Fecha de factura:</b> la del documento del proveedor.</div></li>
+        <li><div><b>Precio unitario:</b> el acordado. La orden trae US$ 40,625 × 5.280 = US$ 214.500,00. Si el precio acordado es otro, se corrige en la línea.</div></li>
+        <li><div><b>Expediente de importación:</b> si se creó el expediente (paso 3), selecciónalo.</div></li>
+        <li><div>Pulsa <b>Confirmar</b>.</div></li>
+      </ol>
+      <figure>
+        <img src="img/33_diario_gastos_no_fiscales.webp" alt="Diario GASTOS NO FISCALES" loading="lazy" width="1600" height="1000">
+        <figcaption><ol class="marks"><li><b>Documento no fiscal</b> activado (junto con <b>Eliminar impuestos</b>).</li><li>Tipo <b>Compras</b>.</li></ol></figcaption>
+      </figure>
+      <figure>
+        <img src="img/33b_facturas_gastos_no_fiscales.webp" alt="Facturas de navieras en GASTOS NO FISCALES" loading="lazy" width="1600" height="1000">
+        <figcaption>Así están hoy en ese diario las facturas de QINGDAO HOPE y QINGDAO PAN ASIA: sin número de control y pagadas o conciliadas como cualquier factura.</figcaption>
+      </figure>
+      <div class="why">
+        <span class="k">Qué hace Odoo 19 al confirmar</span>
+        <p>Con valuación perpetua, la factura ligada a la orden recalcula el valor de la recepción VAL/IN/00044 con el precio de la factura. Si el precio es el mismo de la orden (US$ 40,625), el costo del NORI no cambia. El costo en destino LC/2026/0118 se mantiene.</p>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section id="p2">
+      <h2><span class="n">4</span>Paso 2 · Cruzar los anticipos con la factura</h2>
+      <ol class="steps">
+        <li><div>En la factura confirmada, al pie, aparece el recuadro <b>Débitos pendientes</b> con los anticipos de NANTONG.</div></li>
+        <li><div>Pulsa <b>Agregar</b> en <b>ADEL 1023</b> (US$ 107.250,00) y luego en <b>ADEL 1128</b> (US$ 107.250,00).</div></li>
+        <li><div>La factura queda <b>Pagada</b>, sin saldo pendiente. ADEL 1102 y ADEL 1022 siguen disponibles para la factura que les corresponda.</div></li>
+      </ol>
+      <div class="why">
+        <span class="k">Diferencia en cambio</span>
+        <p>Los anticipos se registraron en Bs a la tasa del día de cada pago (602,3324 y 848,5458), y la factura usa la tasa de su fecha. En US$ cuadra exacto; la diferencia en Bs la registra Odoo con un asiento de diferencia en cambio al conciliar.</p>
+      </div>
+      <p>No registres un pago nuevo a NANTONG por esta factura: el dinero ya salió y está en los anticipos.</p>
+    </section>
+
+    <!-- 5 -->
+    <section id="p3">
+      <h2><span class="n">5</span>Paso 3 · Planilla de liquidación de la nacionalización</h2>
+      <p>La planilla de liquidación es el documento que entra al libro de compras como importación, con su IVA de importación (crédito fiscal).</p>
+      <ol class="steps">
+        <li><div><span class="path">Contabilidad › Proveedores › Facturas</span>: documento a nombre del contacto <b>SENIAT</b>, diario <b>FACTURAS PROVEEDORES</b>, fecha de la planilla.</div></li>
+        <li><div>Número de planilla de liquidación y número del DUA en la referencia y en los campos de importación de la localización.</div></li>
+        <li><div>IVA de importación con el impuesto <b>16% C</b>, sobre la base imponible que indica la planilla.</div></li>
+        <li><div>Registra el expediente en <span class="path">Importaciones › Operaciones › Expedientes</span>: Nº DUA, Nº de planilla de liquidación, tasa BCV del DUA, OC-00916, VAL/IN/00044, la factura del proveedor y los costos.</div></li>
+      </ol>
+      <figure>
+        <img src="img/35_partner_seniat.webp" alt="Contacto SENIAT" loading="lazy" width="1600" height="1000">
+        <figcaption>El contacto <b>SENIAT</b> ya existe en Odoo.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/36_expedientes_importacion.webp" alt="Expedientes de importación" loading="lazy" width="1600" height="1000">
+        <figcaption><span class="tag">Importaciones › Operaciones › Expedientes.</span> Aún no hay expedientes creados.</figcaption>
+      </figure>
+      <div class="find">
+        <div class="h"><span class="pill warn">Validar antes de registrar</span><strong>Campos de importación de la localización</strong></div>
+        <p>La factura de proveedor muestra los campos <b>Nº de planilla de importación</b>, <b>fecha de la planilla</b>, <b>Nº de expediente</b> y <b>Factura SENIAT</b> solo cuando el proveedor es una <b>empresa PJND</b> (Persona Jurídica No Domiciliada). NANTONG está como PNNR (persona) y SENIAT como PNRE (persona). Antes de registrar la planilla del NORI hay que probar en staging qué contacto y qué campos genera la línea <b>Importación</b> del libro de compras.</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section id="p4">
+      <h2><span class="n">6</span>Paso 4 · Arancel, tasas y gastos al costo</h2>
+      <ol class="steps">
+        <li><div>Registra cada gasto con un producto de servicio marcado <b>Es un costo en destino</b>: arancel, tasa por régimen aduanero, ISAEA, agente aduanal, gastos de puerto y transporte.</div></li>
+        <li><div>Crea un <b>costo en destino nuevo</b> sobre VAL/IN/00044 desde la factura de cada gasto (botón <b>Crear costos en destino</b>), pulsa <b>Compute</b> y <b>Validar</b>. Detalle en el manual «Costos en destino».</div></li>
+        <li><div>El IVA de importación <b>no</b> va al costo en destino: es crédito fiscal (paso 3).</div></li>
+      </ol>
+      <figure>
+        <img src="img/06_producto_gen04_compras.webp" alt="Producto GEN04 marcado como costo en destino" loading="lazy" width="1600" height="1000">
+        <figcaption>Producto de servicio con <b>Es un costo en destino</b> y método de división.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/12_tipos_gasto_importacion.webp" alt="Tipos de gasto de importación" loading="lazy" width="1600" height="1000">
+        <figcaption>Tipos de gasto de <code>nks_importaciones</code> con su criterio de distribución: arancel, seguro e ISAEA por costo actual; fletes por peso; agente y puerto en partes iguales.</figcaption>
+      </figure>
+    </section>
+
+    <!-- 7 -->
+    <section id="resultado">
+      <h2><span class="n">7</span>Resultado y control</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Control</th><th>Dónde se ve</th><th>Resultado esperado</th></tr></thead>
+          <tbody>
+            <tr><td>Factura NANTONG</td><td>Contabilidad › Proveedores › Facturas</td><td>US$ 214.500,00, diario GASTOS NO FISCALES, estado Pagada</td></tr>
+            <tr><td>Anticipos</td><td>Apuntes contables de NANTONG, cuenta 2.1.02.002</td><td>ADEL 1023 y ADEL 1128 conciliados; ADEL 1102 y ADEL 1022 abiertos</td></tr>
+            <tr><td>Orden de compra</td><td>OC-00916</td><td>5.280 cajas facturadas, sin cantidades por facturar</td></tr>
+            <tr><td>Libro de compras</td><td>Libro de compras del período</td><td>Solo la planilla de liquidación, como importación</td></tr>
+            <tr><td>Costo del NORI</td><td>Producto NORI KAMPOS 10HOJAS/50P</td><td>Precio de factura + costos en destino validados</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section id="errores">
+      <h2><span class="n">8</span>Errores comunes</h2>
+      <div class="errs">
+        <div class="err"><div>❌ Registrar la factura del proveedor en FACTURAS PROVEEDORES.</div><div>✅ Diario GASTOS NO FISCALES: se paga y concilia igual, pero no entra al libro de compras.</div></div>
+        <div class="err"><div>❌ Crear la factura a mano, sin la orden de compra.</div><div>✅ Crearla desde OC-00916 (Crear facturas o Subir factura) para que quede ligada a la recepción y al costo.</div></div>
+        <div class="err"><div>❌ Registrar un pago nuevo a NANTONG.</div><div>✅ Cruzar los anticipos ADEL 1023 y ADEL 1128 con «Débitos pendientes › Agregar».</div></div>
+        <div class="err"><div>❌ Cruzar ADEL 1102 con esta factura.</div><div>✅ ADEL 1102 (US$ 98.825,00) es de otra orden; queda abierto.</div></div>
+        <div class="err"><div>❌ Registrar la planilla de liquidación a nombre de NANTONG.</div><div>✅ A nombre de SENIAT, en FACTURAS PROVEEDORES.</div></div>
+        <div class="err"><div>❌ Incluir el IVA de importación en el costo en destino.</div><div>✅ El IVA va a crédito fiscal; al costo solo van arancel, tasas y gastos.</div></div>
+        <div class="err"><div>❌ Cambiar el costo en destino LC/2026/0118 ya validado.</div><div>✅ Los gastos nuevos van en un costo en destino nuevo sobre la misma recepción.</div></div>
+      </div>
+    </section>
+
+    <footer>NIKKOSOFT Consultores C.A. · www.nikkosoft.net · Capturas de alimentos-monteverde.odoo.com del 26/10/2026. Complementa el manual «Costos en destino: configuración de cuentas y uso».</footer>
+  </main>
+</div>

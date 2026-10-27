@@ -1,0 +1,558 @@
+<title>Costos en destino AMV</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: índice fijo a la izquierda en escritorio, columna de lectura de 760px; las capturas salen a 1040px. */
+:root {
+  --bg: #F7F5FA;          /* Snow */
+  --surface: #FFFFFF;
+  --card: #EEEAF2;        /* Mist */
+  --line: #E0DDE4;        /* Smoke */
+  --ink: #212121;
+  --ink-strong: #241b36;  /* Azul profundo */
+  --muted: #5f5873;
+  --accent: #ff8c00;      /* Naranja principal */
+  --accent-2: #fb6419;
+  --accent-ink: #b45a00;  /* naranja legible sobre claro */
+  --soft: #FFF3E0;
+  --ok: #1f7a4d;
+  --ok-soft: #e6f4ec;
+  --warn: #9a4a00;
+  --warn-soft: #fff3e0;
+  --bad: #b42318;
+  --bad-soft: #fdecea;
+  --font-display: 'Geist', 'Inter', 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Geist', 'Inter', 'Open Sans', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --shadow: 0 2px 8px rgba(36,27,54,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17121f; --surface: #1f1929; --card: #2a2236; --line: #3a3147;
+    --ink: #ebe7f2; --ink-strong: #ffffff; --muted: #a8a8c7;
+    --accent: #ff9d2e; --accent-2: #fb7a3a; --accent-ink: #ffb054; --soft: #33240f;
+    --ok: #6fd3a0; --ok-soft: #173326; --warn: #ffb054; --warn-soft: #33240f; --bad: #ff8f85; --bad-soft: #3a1b1a;
+    --shadow: 0 2px 8px rgba(0,0,0,0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17121f; --surface: #1f1929; --card: #2a2236; --line: #3a3147;
+  --ink: #ebe7f2; --ink-strong: #ffffff; --muted: #a8a8c7;
+  --accent: #ff9d2e; --accent-2: #fb7a3a; --accent-ink: #ffb054; --soft: #33240f;
+  --ok: #6fd3a0; --ok-soft: #173326; --warn: #ffb054; --warn-soft: #33240f; --bad: #ff8f85; --bad-soft: #3a1b1a;
+  --shadow: 0 2px 8px rgba(0,0,0,0.35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6; letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.topbar { height: 6px; background: var(--accent); }
+.wrap {
+  display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px;
+  max-width: 1360px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+}
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 14px; }
+nav.toc .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: var(--ink-strong); font-weight: 600; }
+nav.toc .brand img { width: 28px; height: 28px; border-radius: 6px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+nav.toc a { display: block; padding: 6px 10px; border-radius: 8px; color: var(--muted); text-decoration: none; }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--card); color: var(--ink-strong); outline: none; }
+nav.toc .sub a { padding-left: 22px; font-size: 13px; }
+main { min-width: 0; }
+.col { max-width: 760px; }
+header.cover { padding-bottom: 32px; border-bottom: 1px solid var(--line); margin-bottom: 40px; }
+.eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-ink); font-weight: 600; }
+h1 { font-family: var(--font-display); font-size: clamp(32px, 5vw, 44px); line-height: 1.12; letter-spacing: -0.02em; color: var(--ink-strong); margin: 8px 0 12px; text-wrap: balance; }
+.lede { font-size: 18px; color: var(--muted); max-width: 64ch; margin: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 20px; font-size: 13px; color: var(--muted); }
+.meta b { color: var(--ink); font-weight: 600; }
+section { padding-top: 16px; margin-bottom: 56px; scroll-margin-top: 24px; }
+h2 { font-family: var(--font-display); font-size: 28px; line-height: 1.2; color: var(--ink-strong); margin: 0 0 12px; text-wrap: balance; }
+h2 .n { color: var(--accent); margin-right: 10px; font-variant-numeric: tabular-nums; }
+h3 { font-family: var(--font-display); font-size: 20px; line-height: 1.3; color: var(--ink-strong); margin: 36px 0 8px; text-wrap: balance; scroll-margin-top: 24px; }
+p { margin: 0 0 14px; max-width: 68ch; }
+ul, ol { margin: 0 0 14px; padding-left: 22px; max-width: 68ch; }
+li { margin-bottom: 6px; }
+a { color: var(--accent-ink); }
+code, .mono { font-family: var(--font-mono); font-size: 0.88em; background: var(--card); padding: 1px 6px; border-radius: 4px; }
+.path { font-family: var(--font-body); font-weight: 600; color: var(--ink-strong); background: var(--card); padding: 2px 8px; border-radius: 6px; white-space: normal; }
+strong { color: var(--ink-strong); }
+
+figure { margin: 20px 0 28px; max-width: 1040px; }
+figure img { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); box-shadow: var(--shadow); background: #fff; }
+figcaption { font-size: 13px; line-height: 1.5; color: var(--muted); margin-top: 10px; max-width: 90ch; }
+figcaption .tag { font-weight: 600; color: var(--ink); }
+.marks { counter-reset: m; list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; font-size: 14px; }
+.marks li { position: relative; padding-left: 32px; margin: 0; min-height: 22px; }
+.marks li::before { counter-increment: m; content: counter(m); position: absolute; left: 0; top: 0; width: 22px; height: 22px; border-radius: 50%; background: #E8501B; color: #fff; font: 700 12px/22px var(--font-body); text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+.why { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 16px 0 20px; max-width: 760px; }
+.why .k { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--accent-ink); display: block; margin-bottom: 4px; }
+.why p:last-child { margin-bottom: 0; }
+
+.find { border-radius: 12px; padding: 16px 18px; margin: 14px 0; max-width: 760px; border: 1px solid var(--line); background: var(--surface); }
+.find .h { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 6px; }
+.find .h strong { font-size: 16px; }
+.pill { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.find p:last-child { margin-bottom: 0; }
+
+.tbl { overflow-x: auto; margin: 14px 0 22px; max-width: 1040px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; background: var(--card); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td .acc { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+
+.ledger { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 18px 0 24px; max-width: 1040px; }
+.entry { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.entry .when { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+.entry h4 { margin: 4px 0 10px; font-size: 16px; color: var(--ink-strong); font-family: var(--font-display); }
+.entry table { font-size: 13px; }
+.entry th, .entry td { padding: 7px 8px; }
+.entry .note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+.dr { color: var(--ink); } .cr { color: var(--muted); }
+
+.steps { list-style: none; padding: 0; counter-reset: st; display: grid; gap: 10px; max-width: 760px; }
+.steps > li { counter-increment: st; display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 12px; margin: 0; }
+.steps > li::before { content: counter(st); width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--accent); color: var(--accent-ink); font: 700 14px/26px var(--font-body); text-align: center; }
+
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin: 16px 0 22px; max-width: 1040px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-width: 0; }
+.kpi .l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.kpi .v { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--ink-strong); font-variant-numeric: tabular-nums; line-height: 1.25; margin-top: 4px; }
+.kpi .s { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.kpi.hi .v { color: var(--accent-ink); }
+
+.errs { display: grid; gap: 10px; max-width: 900px; margin: 14px 0; }
+.err { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.err > div { padding: 12px 14px; font-size: 14px; min-width: 0; }
+.err > div:first-child { background: var(--bad-soft); }
+.err > div:last-child { background: var(--ok-soft); }
+
+footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px; font-size: 13px; color: var(--muted); }
+
+@media (max-width: 980px) {
+  .wrap { grid-template-columns: minmax(0,1fr); gap: 24px; padding-block: 24px 64px; }
+  nav.toc { position: static; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+}
+@media (max-width: 640px) {
+  .ledger, .kpis, .err { grid-template-columns: minmax(0,1fr); }
+  h2 { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+@media print {
+  body { font-size: 10.5pt; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  figure img { max-height: 125mm; width: auto; max-width: 100%; margin: 0 auto; }
+  body::before, .topbar, nav.toc { display: none; }
+  .wrap { display: block; max-width: none; padding: 0; }
+  .col, p, ul, ol { max-width: none; }
+  header.cover { margin-bottom: 20px; }
+  section { margin-bottom: 20px; padding-top: 0; }
+  h2 { break-after: avoid; margin-top: 8px; }
+  h3 { break-after: avoid; margin-top: 18px; }
+  figure, .find, .entry, .err, .kpi, .why, .tbl, .steps > li, .ledger, .kpis { break-inside: avoid; }
+  figure { margin: 10px 0 16px; }
+  figure img { box-shadow: none; }
+  section#config, section#hallazgos, section#uso, section#verificar, section#errores { break-before: page; }
+}
+</style>
+
+<div class="topbar"></div>
+<div class="wrap">
+  <nav class="toc" aria-label="Contenido">
+    <div class="brand"><img src="img/nikkosoft-isotipo.png" alt="NIKKOSOFT">Manual AMV</div>
+    <ol>
+      <li><a href="#idea">1. Cómo se mueven las cuentas</a></li>
+      <li><a href="#config">2. Configuración</a></li>
+      <li class="sub"><a href="#c-activar">2.1 Activar costos en destino</a></li>
+      <li class="sub"><a href="#c-valuacion">2.2 Valuación perpetua</a></li>
+      <li class="sub"><a href="#c-categoria">2.3 Categoría del producto</a></li>
+      <li class="sub"><a href="#c-servicio">2.4 Producto del gasto</a></li>
+      <li class="sub"><a href="#c-cuenta">2.5 Cuenta y diario</a></li>
+      <li class="sub"><a href="#c-tipos">2.6 Tipos de gasto</a></li>
+      <li><a href="#hallazgos">3. Revisión de la configuración actual</a></li>
+      <li><a href="#uso">4. Uso paso a paso</a></li>
+      <li class="sub"><a href="#u-factura">4.1 Desde la factura del gasto</a></li>
+      <li class="sub"><a href="#u-manual">4.2 Desde Inventario</a></li>
+      <li class="sub"><a href="#u-calcular">4.3 Calcular y validar</a></li>
+      <li><a href="#verificar">5. Verificar el resultado</a></li>
+      <li><a href="#metodos">6. Métodos de división</a></li>
+      <li><a href="#errores">7. Errores comunes</a></li>
+      <li><a href="#mapa">8. Mapa de cuentas</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="cover col">
+      <div class="eyebrow">Alimentos MonteVerde C.A. · Odoo 19 Enterprise</div>
+      <h1>Costos en destino: configuración de cuentas y uso</h1>
+      <p class="lede">Cómo se configura y se usa el costo en destino en AMV para que fletes, aduana y demás gastos de importación pasen al costo del inventario. Todas las capturas salen de la base de producción.</p>
+      <div class="meta">
+        <span><b>Instancia</b> alimentos-monteverde.odoo.com</span>
+        <span><b>Capturas</b> 26/10/2026</span>
+        <span><b>Módulos</b> stock_landed_costs 19.0.1.1 · mrp_landed_costs · account_dual_currency 1.12.20 · nks_importaciones 1.5.1</span>
+        <span><b>Elaborado por</b> NIKKOSOFT Consultores C.A.</span>
+      </div>
+    </header>
+
+    <!-- 1 -->
+    <section id="idea">
+      <h2><span class="n">1</span>Cómo se mueven las cuentas</h2>
+      <p>Un costo en destino toma un gasto que ya se registró en una cuenta de gasto (flete, agente aduanal, arancel) y lo traslada al valor del inventario de una recepción. Son dos asientos:</p>
+      <ol>
+        <li><strong>La factura del gasto</strong> debita la <em>cuenta de gastos del producto de servicio</em> (en AMV, <code>5.1.01.007 GASTOS DE IMPORTACION</code>) contra la cuenta por pagar del proveedor.</li>
+        <li><strong>El costo en destino validado</strong> debita la <em>cuenta de inventario de la categoría</em> (<code>1.1.13.001 INVENTARIO VENTA</code>) y acredita la misma cuenta de gastos. La cuenta de gastos queda en cero para ese gasto y el valor queda en el inventario.</li>
+      </ol>
+      <div class="why">
+        <span class="k">Por qué importa</span>
+        <p>La cuenta de gastos del producto de servicio funciona como puente. Si la factura y el costo en destino no usan la misma cuenta, el gasto queda duplicado en resultados o la cuenta queda con saldo acreedor. Por eso lo primero que se configura es esa cuenta.</p>
+      </div>
+      <p>Ejemplo real con <strong>LC/2026/0118</strong> (22/10/2026, recepción <code>VAL/IN/00044</code>, 5.280 cajas de NORI KAMPOS 10HOJAS/50P), gasto de US$ 43.532,00 a la tasa 884,7496:</p>
+      <div class="ledger">
+        <div class="entry">
+          <div class="when">Asiento 1 · factura del gasto</div>
+          <h4>Proveedor del servicio</h4>
+          <table>
+            <thead><tr><th>Cuenta</th><th class="num">Débito</th><th class="num">Crédito</th></tr></thead>
+            <tbody>
+              <tr><td><span class="acc">5.1.01.007</span> Gastos de importación</td><td class="num">38.514.919,59</td><td class="num"></td></tr>
+              <tr><td><span class="acc">2.1.02.x</span> Cuentas por pagar</td><td class="num"></td><td class="num">38.514.919,59</td></tr>
+            </tbody>
+          </table>
+          <p class="note">Ilustrativo: LC/2026/0118 no tiene factura enlazada (hallazgo H3). Montos en Bs; el IVA del servicio va a crédito fiscal y no entra al costo.</p>
+        </div>
+        <div class="entry">
+          <div class="when">Asiento 2 · costo en destino validado</div>
+          <h4>STJ/2026/10/0001 (LC/2026/0118)</h4>
+          <table>
+            <thead><tr><th>Cuenta</th><th class="num">Débito</th><th class="num">Crédito</th></tr></thead>
+            <tbody>
+              <tr><td><span class="acc">1.1.13.001</span> Inventario venta</td><td class="num">38.514.919,59</td><td class="num"></td></tr>
+              <tr><td><span class="acc">5.1.01.007</span> Gastos de importación</td><td class="num"></td><td class="num">38.514.919,59</td></tr>
+            </tbody>
+          </table>
+          <p class="note">Este es el asiento real registrado en producción (ver sección 5).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="config">
+      <h2><span class="n">2</span>Configuración</h2>
+      <p>Esta configuración ya está hecha en AMV. Úsala para revisar que nada cambie y para configurar productos de gasto nuevos.</p>
+
+      <h3 id="c-activar">2.1 Activar costos en destino</h3>
+      <p>Ruta: <span class="path">Inventario › Configuración › Ajustes › Valoración</span></p>
+      <figure>
+        <img src="img/01_ajustes_inventario.webp" alt="Ajustes de Inventario, bloque Valoración con Costos en destino activado" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <ol class="marks"><li><b>Costos en destino</b> marcado. <b>Diario predeterminado</b> vacío: Odoo usa entonces el diario de valuación de inventario (<code>STJ · Valuación de inventario</code>).</li></ol>
+        </figcaption>
+      </figure>
+
+      <h3 id="c-valuacion">2.2 Valuación perpetua y método de costo de la empresa</h3>
+      <p>Ruta: <span class="path">Contabilidad › Configuración › Ajustes › Valuación de inventario</span></p>
+      <figure>
+        <img src="img/02_ajustes_contabilidad_valuacion.webp" alt="Ajustes de Contabilidad, bloque Valuación de inventario" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <ol class="marks">
+            <li><b>Valuación de inventario: Perpetuo (al facturar).</b> Sin valuación perpetua el costo en destino cambia el costo pero no genera asiento.</li>
+            <li><b>Método de costo: Costo promedio (AVCO).</b> El gasto se suma al costo promedio del producto.</li>
+            <li><b>Cuenta de valuación: 1.1.13.001 INVENTARIO VENTA.</b> Es la cuenta que recibe el débito del costo en destino.</li>
+            <li><b>Diario: Valuación de inventario.</b></li>
+          </ol>
+        </figcaption>
+      </figure>
+      <div class="why">
+        <span class="k">Novedad de Odoo 19</span>
+        <p>En Odoo 19 la valuación y el método de costo se definen por empresa en Contabilidad y cada categoría puede sobrescribirlos. En Odoo 18 se configuraban solo en la categoría, con la opción «Automatizada».</p>
+      </div>
+
+      <h3 id="c-categoria">2.3 Categoría de los productos que se importan</h3>
+      <p>Ruta: <span class="path">Inventario › Configuración › Categorías de productos</span>. Ejemplo: <strong>All / NORI / NORI</strong>.</p>
+      <figure>
+        <img src="img/03_categoria_nori.webp" alt="Categoría de producto NORI con valuación perpetua y cuentas" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <ol class="marks">
+            <li><b>Método de costo: Costo promedio (AVCO).</b></li>
+            <li><b>Valuación de inventario: Perpetuo (al facturar).</b></li>
+            <li><b>Cuenta de gastos: 5.1.01.001 COSTO DE VENTAS MCIA NACIONAL.</b> Es el costo de venta de la mercancía; no participa en el costo en destino.</li>
+            <li><b>Cuenta de inventario: 1.1.13.001 INVENTARIO VENTA.</b> Débito del asiento del costo en destino.</li>
+          </ol>
+        </figcaption>
+      </figure>
+      <p>Las 67 categorías de AMV tienen valuación perpetua, AVCO y cuenta de inventario <code>1.1.13.001</code>, así que cualquier producto almacenable puede recibir costos en destino.</p>
+
+      <h3 id="c-servicio">2.4 Producto de servicio para el gasto</h3>
+      <p>Cada tipo de gasto que se quiera capitalizar necesita un producto de tipo <strong>Servicio</strong> marcado como costo en destino. El producto de referencia en AMV es <strong>[GEN04] GASTO DE IMPORTACION</strong>. Ruta: <span class="path">Compras › Productos › Productos</span>.</p>
+      <figure>
+        <img src="img/05_producto_gen04_general.webp" alt="Producto GEN04, pestaña Información general, tipo Servicio" loading="lazy" width="1600" height="1000">
+        <figcaption><ol class="marks"><li><b>Tipo de producto: Servicio.</b> La casilla de costo en destino solo aparece en servicios.</li></ol></figcaption>
+      </figure>
+      <figure>
+        <img src="img/06_producto_gen04_compras.webp" alt="Producto GEN04, pestaña Compras con Es un costo en destino" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <p><span class="tag">Pestaña Compras › Facturas de proveedores</span></p>
+          <ol class="marks">
+            <li><b>Es un costo en destino</b> marcado. Las líneas de factura con este producto se marcan solas como costo en destino.</li>
+            <li><b>Método de división predeterminado: Por cantidad.</b> Se puede cambiar en cada costo en destino (ver sección 6).</li>
+          </ol>
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="img/07_producto_gen04_contabilidad.webp" alt="Producto GEN04, pestaña Contabilidad con cuenta de gastos 5.1.01.007" loading="lazy" width="1600" height="1000">
+        <figcaption><ol class="marks"><li><b>Cuenta de gastos: 5.1.01.007 GASTOS DE IMPORTACION.</b> La factura la debita y el costo en destino la acredita. Es la cuenta que define todo el flujo.</li></ol></figcaption>
+      </figure>
+      <div class="why">
+        <span class="k">Regla</span>
+        <p>Si el producto no tiene cuenta de gastos propia, Odoo toma la de su categoría. Si la categoría tampoco tiene, el gasto termina en otra cuenta. Asigna siempre la cuenta en el producto. Ver hallazgo H1.</p>
+      </div>
+
+      <h3 id="c-cuenta">2.5 Cuenta de gastos de importación y diario</h3>
+      <figure>
+        <img src="img/10_cuenta_gastos_importacion.webp" alt="Cuenta 5.1.01.007 GASTOS DE IMPORTACION, tipo Costo de ingresos" loading="lazy" width="1600" height="1000">
+        <figcaption><ol class="marks"><li><b>5.1.01.007 GASTOS DE IMPORTACION</b>, tipo <b>Costo de ingresos</b>, sin conciliación. Ruta: <span class="path">Contabilidad › Configuración › Plan de cuentas</span>.</li></ol></figcaption>
+      </figure>
+      <figure>
+        <img src="img/11_diario_valuacion.webp" alt="Diario Valuación de inventario, tipo Misceláneo, prefijo STJ" loading="lazy" width="1600" height="1000">
+        <figcaption>El diario <b>Valuación de inventario</b> (Misceláneo, prefijo <code>STJ</code>) recibe los asientos de los costos en destino. Ruta: <span class="path">Contabilidad › Configuración › Diarios</span>.</figcaption>
+      </figure>
+
+      <h3 id="c-tipos">2.6 Tipos de gasto de importación (módulo de la localización)</h3>
+      <p>El módulo <code>nks_importaciones</code> agrega el menú <span class="path">Importaciones › Configuración › Tipos de gasto</span> con 14 tipos y su criterio de distribución. Cada tipo puede enlazar un producto de servicio en la columna <b>Producto servicio</b>, que hoy está vacía en todos. Todavía no hay expedientes de importación registrados.</p>
+      <figure>
+        <img src="img/12_tipos_gasto_importacion.webp" alt="Lista de tipos de gasto de importación" loading="lazy" width="1600" height="1000">
+        <figcaption>Flete internacional y Transporte interno reparten por peso; Seguro, Arancel e ISAEA por costo actual; Agente aduanal, Gastos de puerto y Almacenaje en partes iguales. El IVA de importación deducible no se distribuye: va a crédito fiscal.</figcaption>
+      </figure>
+    </section>
+
+    <!-- 3 -->
+    <section id="hallazgos">
+      <h2><span class="n">3</span>Revisión de la configuración actual</h2>
+      <p>Al revisar producción el 26/10/2026 encontramos estos puntos. Ninguno se corrigió: los cambios de cuentas los decide Contabilidad.</p>
+
+      <div class="find">
+        <div class="h"><span class="pill bad">Corregir</span><strong>H1 · «GASTO DE IMPORTACION ORDINARIA» no tiene cuenta de gastos</strong></div>
+        <p>El producto está marcado como costo en destino, pero su cuenta de gastos dice «De categoría» y su categoría <b>GASTOS OTROS</b> tampoco tiene cuenta de gastos. Resultado: la factura <b>C003-00001942</b> de CORPORACION 18, S.A. registró el gasto de 370.049,40 Bs en <code>5.1.01.001 COSTO DE VENTAS MCIA NACIONAL</code>, mezclado con el costo de venta.</p>
+        <p><strong>Acción sugerida:</strong> asignar <code>5.1.01.007 GASTOS DE IMPORTACION</code> como cuenta de gastos del producto (o de la categoría GASTOS OTROS). La decisión es de Contabilidad.</p>
+      </div>
+      <figure>
+        <img src="img/08_producto_1319_sin_cuenta.webp" alt="Producto GASTO DE IMPORTACION ORDINARIA sin cuenta de gastos" loading="lazy" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Cuenta de gastos «De categoría».</li></ol></figcaption>
+      </figure>
+      <figure>
+        <img src="img/04_categoria_gastos_otros.webp" alt="Categoría GASTOS OTROS sin cuenta de gastos" loading="lazy" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Categoría GASTOS OTROS: <b>Cuenta de gastos</b> vacía.</li><li>Cuenta de inventario 1.1.13.001 (no aplica a servicios).</li></ol></figcaption>
+      </figure>
+
+      <div class="find">
+        <div class="h"><span class="pill warn">Pendiente</span><strong>H2 · Factura C003-00001942 sin costo en destino</strong></div>
+        <p>La factura (ref. 140066, fecha 19/10/2026) tiene una línea de costo en destino y el botón <b>Crear costos en destino</b> sigue visible: el gasto aún no se ha llevado a ninguna recepción. Conviene resolver H1 antes de crearlo, porque el costo en destino acredita la misma cuenta de gastos del producto. La captura está en la sección 4.1.</p>
+      </div>
+
+      <div class="find">
+        <div class="h"><span class="pill warn">Mejorar</span><strong>H3 · LC/2026/0118 sin factura de proveedor vinculada</strong></div>
+        <p>El costo en destino se creó desde Inventario y el campo <b>Factura de proveedor</b> quedó vacío. El asiento es correcto, pero se pierde el enlace para auditar de qué factura salió el gasto. Recomendación: crear los costos en destino desde la factura (4.1) o llenar el campo antes de validar.</p>
+      </div>
+
+      <div class="find">
+        <div class="h"><span class="pill ok">Correcto</span><strong>H4 · Valuación, categorías y producto GEN04</strong></div>
+        <p>Valuación perpetua, AVCO, cuenta de inventario 1.1.13.001 en las 67 categorías y producto GEN04 con cuenta 5.1.01.007. El costo en destino LC/2026/0118 dejó el costo unitario del NORI exactamente en el valor esperado (sección 5).</p>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section id="uso">
+      <h2><span class="n">4</span>Uso paso a paso</h2>
+      <p>Antes de empezar, la mercancía tiene que estar <strong>recibida</strong>: el costo en destino se aplica sobre una recepción en estado <b>Hecho</b>.</p>
+      <figure>
+        <img src="img/20_recepcion_val_in_00044.webp" alt="Recepción VAL/IN/00044 en estado Hecho" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <ol class="marks">
+            <li>Recepción <b>VAL/IN/00044</b> (NANTONG SAILING TRADING CO., LTD) en estado <b>Hecho</b>.</li>
+            <li>Documento origen <b>OC-00916</b>.</li>
+            <li>Fecha efectiva 22/10/2026, 1:05 p. m.</li>
+          </ol>
+        </figcaption>
+      </figure>
+
+      <h3 id="u-factura">4.1 Desde la factura del gasto (recomendado)</h3>
+      <ol class="steps">
+        <li><div>Registra la factura del proveedor del servicio (agente aduanal, naviera, transporte) en <span class="path">Contabilidad › Proveedores › Facturas</span> con el producto de servicio marcado como costo en destino.</div></li>
+        <li><div>En las líneas, la columna <b>Costos en destino</b> se marca sola. Si no la ves, actívala con el ícono de columnas opcionales al final de la cabecera de la tabla.</div></li>
+        <li><div>Confirma la factura. Aparece el botón <b>Crear costos en destino</b>.</div></li>
+        <li><div>Pulsa el botón. Odoo abre un costo en destino en borrador con una línea por cada línea marcada: producto, cuenta de gastos del producto, monto en moneda de la empresa y método de división del producto. La factura queda enlazada.</div></li>
+        <li><div>Continúa en 4.3.</div></li>
+      </ol>
+      <figure>
+        <img src="img/28_factura_gasto_importacion.webp" alt="Factura de proveedor C003-00001942 con botón Crear costos en destino" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <p><span class="tag">Factura C003-00001942 (pendiente, hallazgo H2).</span></p>
+          <ol class="marks">
+            <li>Botón <b>Crear costos en destino</b>.</li>
+            <li>Columna <b>Costos en destino</b> (C...) marcada en la línea.</li>
+            <li>Cuenta de la línea: <b>5.1.01.001</b>. Con el producto bien configurado diría 5.1.01.007 (hallazgo H1).</li>
+          </ol>
+        </figcaption>
+      </figure>
+
+      <h3 id="u-manual">4.2 Desde Inventario</h3>
+      <p>Úsalo cuando el gasto no viene de una factura de proveedor registrada en Odoo o cuando se reparte un gasto ya contabilizado. Ruta: <span class="path">Inventario › Operaciones › Ajustes › Costos en destino</span>.</p>
+      <figure>
+        <img src="img/21_menu_costos_destino.webp" alt="Menú Operaciones de Inventario con Costos en destino" loading="lazy" width="1600" height="1000">
+        <figcaption><ol class="marks"><li><b>Costos en destino</b> dentro de Operaciones › Ajustes.</li></ol></figcaption>
+      </figure>
+      <figure>
+        <img src="img/22_lista_costos_destino.webp" alt="Lista de costos en destino" loading="lazy" width="1600" height="1000">
+        <figcaption>Lista de costos en destino. Pulsa <b>Nuevo</b>.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/23_nuevo_costo_destino.webp" alt="Formulario nuevo de costo en destino" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <ol class="marks">
+            <li><b>Aplicar en:</b> Traslados (recepciones de compra) u Órdenes de fabricación.</li>
+            <li><b>Traslados:</b> elige una o varias recepciones ya validadas. En AMV este campo no permite crear traslados desde aquí (ajuste del chat 2353).</li>
+            <li><b>Diario:</b> Valuación de inventario, por defecto.</li>
+            <li><b>Factura de proveedor:</b> enlaza la factura del gasto si existe (hallazgo H3).</li>
+            <li><b>Costos adicionales:</b> una línea por gasto con producto de servicio, cuenta, método de división y monto.</li>
+          </ol>
+        </figcaption>
+      </figure>
+      <div class="why">
+        <span class="k">Moneda (localización dual)</span>
+        <p>Junto al diario está el campo <b>Moneda</b>. Con US$ cargas el monto en <b>Cost</b> y la localización lo convierte a Bs con la <b>Tasa</b> del día en <b>Cost in Company Currency</b>. El asiento siempre se registra en Bs.</p>
+      </div>
+
+      <h3 id="u-calcular">4.3 Calcular y validar</h3>
+      <ol class="steps">
+        <li><div>Revisa cada línea de <b>Costos adicionales</b>: cuenta = cuenta de gastos del producto (5.1.01.007) y método de división adecuado.</div></li>
+        <li><div>Pulsa <b>Compute</b> (Calcular). Se llena la pestaña <b>Ajustes de valoración</b> con el reparto por producto.</div></li>
+        <li><div>Revisa el reparto. Si algo no cuadra, corrige las líneas y vuelve a calcular.</div></li>
+        <li><div>Pulsa <b>Validar</b>. El estado pasa a <b>Registrado</b>, se crea el asiento en el diario STJ y el costo promedio de los productos se actualiza.</div></li>
+      </ol>
+      <figure>
+        <img src="img/24_lc118_costos_adicionales.webp" alt="LC/2026/0118, pestaña Costos adicionales" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <p><span class="tag">LC/2026/0118 · Costos adicionales</span></p>
+          <ol class="marks">
+            <li>Recepción VAL/IN/00044.</li>
+            <li>Diario Valuación de inventario.</li>
+            <li>Cuenta 5.1.01.007 GASTOS DE IMPORTACION (se acredita al validar).</li>
+            <li>Método de división: Por cantidad.</li>
+            <li>Tasa 884,7496.</li>
+            <li>Costo US$ 43.532,0000.</li>
+            <li>Equivalente 38.514.919,59 Bs.</li>
+          </ol>
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="img/25_lc118_ajustes_valoracion.webp" alt="LC/2026/0118, pestaña Ajustes de valoración" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <p><span class="tag">Ajustes de valoración</span></p>
+          <ol class="marks">
+            <li>Cantidad recibida: 5.280 cajas.</li>
+            <li>Valor original: 189.778.776,00 Bs (US$ 214.499,99).</li>
+            <li>Costo en destino adicional: 38.514.919,59 Bs (US$ 43.532,00).</li>
+            <li>Nuevo valor: 228.293.695,59 Bs (US$ 258.031,99).</li>
+          </ol>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- 5 -->
+    <section id="verificar">
+      <h2><span class="n">5</span>Verificar el resultado</h2>
+      <figure>
+        <img src="img/26_lc118_asiento_link.webp" alt="LC/2026/0118 registrado con su asiento contable" loading="lazy" width="1600" height="1000">
+        <figcaption><ol class="marks"><li><b>Asiento contable</b> STJ/2026/10/0001: abre el asiento desde aquí.</li><li>Estado <b>Registrado</b>.</li></ol>
+        La pestaña <b>Asientos Contables</b> del formulario es de la localización y aparece vacía; el asiento del costo en destino es el del campo 1.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/27_asiento_stj_2026_10_0001.webp" alt="Asiento STJ/2026/10/0001" loading="lazy" width="1600" height="1000">
+        <figcaption>
+          <ol class="marks">
+            <li>Cuentas: débito <b>1.1.13.001 INVENTARIO VENTA</b>, crédito <b>5.1.01.007 GASTOS DE IMPORTACION</b>.</li>
+            <li>Débito 38.514.919,59 Bs.</li>
+            <li>Crédito 38.514.919,59 Bs.</li>
+            <li>Débito en referencia US$ 43.532,00.</li>
+            <li>Crédito en referencia US$ 43.532,00.</li>
+          </ol>
+        </figcaption>
+      </figure>
+      <p>Comprobación del costo unitario de <strong>NORI KAMPOS 10HOJAS/50P</strong>:</p>
+      <div class="kpis">
+        <div class="kpi"><div class="l">Antes</div><div class="v">35.942,95 Bs</div><div class="s">US$ 40,6250 por caja</div></div>
+        <div class="kpi"><div class="l">Costo en destino</div><div class="v">+ 7.294,49 Bs</div><div class="s">US$ 8,2447 por caja</div></div>
+        <div class="kpi hi"><div class="l">Después</div><div class="v">43.237,44 Bs</div><div class="s">US$ 48,8697 por caja</div></div>
+      </div>
+      <p>228.293.695,59 Bs ÷ 5.280 cajas = 43.237,44 Bs, que es el costo que muestra hoy el producto. Así se comprueba cualquier costo en destino: <em>nuevo valor ÷ cantidad en existencia</em> debe dar el costo del producto, siempre que no hubiera existencias previas de ese producto.</p>
+    </section>
+
+    <!-- 6 -->
+    <section id="metodos">
+      <h2><span class="n">6</span>Métodos de división</h2>
+      <p>El método decide cómo se reparte cada gasto entre los productos de las recepciones elegidas.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Método</th><th>Reparte según</th><th>Úsalo para</th><th>Requisito</th></tr></thead>
+          <tbody>
+            <tr><td><b>Igual</b></td><td>Partes iguales por línea de producto</td><td>Agente aduanal, gastos de puerto, almacenaje</td><td>—</td></tr>
+            <tr><td><b>Por cantidad</b></td><td>Unidades recibidas</td><td>Productos de tamaño y valor parecidos (GEN04)</td><td>Unidades comparables entre productos</td></tr>
+            <tr><td><b>Por costo actual</b></td><td>Valor de compra de cada línea</td><td>Seguro, arancel, ISAEA, IVA no deducible</td><td>—</td></tr>
+            <tr><td><b>Por peso</b></td><td>Peso × cantidad</td><td>Flete internacional, transporte interno</td><td>Peso cargado en el producto</td></tr>
+            <tr><td><b>Por volumen</b></td><td>Volumen × cantidad</td><td>Flete terrestre, gastos de permisología</td><td>Volumen cargado en el producto</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="why">
+        <span class="k">Ojo con peso y volumen</span>
+        <p>En LC/2026/0118 el NORI aparece con peso 0 y volumen 0 en los ajustes de valoración. Con «Por peso» o «Por volumen» y productos sin esos datos, Odoo reparte en partes iguales sin avisar. Carga peso y volumen en la pestaña Inventario del producto antes de usar esos métodos (los tipos de gasto de fletes de la sección 2.6 los usan).</p>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section id="errores">
+      <h2><span class="n">7</span>Errores comunes</h2>
+      <div class="errs">
+        <div class="err"><div>❌ Validar el costo en destino y querer cancelarlo después.</div><div>✅ Un costo en destino validado no se cancela. Para revertirlo se crea otro con monto negativo sobre la misma recepción.</div></div>
+        <div class="err"><div>❌ Dejar el producto de servicio sin cuenta de gastos («De categoría»).</div><div>✅ Asignar 5.1.01.007 en la pestaña Contabilidad del producto para que factura y costo en destino usen la misma cuenta.</div></div>
+        <div class="err"><div>❌ Crear el costo en destino semanas después, cuando parte de la mercancía ya se vendió.</div><div>✅ Crearlo apenas llega la factura del gasto. Solo se capitaliza la parte que sigue en existencia; lo vendido queda en la cuenta de gastos.</div></div>
+        <div class="err"><div>❌ Usar un producto almacenable o consumible para el gasto.</div><div>✅ El gasto siempre es un producto de tipo Servicio con «Es un costo en destino».</div></div>
+        <div class="err"><div>❌ Elegir una recepción que no está en Hecho.</div><div>✅ Validar primero la recepción: el costo se reparte sobre las cantidades realmente recibidas.</div></div>
+        <div class="err"><div>❌ Crear el costo en destino sin enlazar la factura del gasto.</div><div>✅ Crearlo con el botón de la factura o llenar «Factura de proveedor» antes de validar.</div></div>
+        <div class="err"><div>❌ Cargar el monto en US$ con la moneda en Bs.</div><div>✅ Cambiar el campo Moneda a USD antes de cargar el costo; la localización convierte con la tasa del día.</div></div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section id="mapa">
+      <h2><span class="n">8</span>Mapa de cuentas</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Rol</th><th>Cuenta / diario en AMV</th><th>Dónde se configura</th><th>Movimiento</th></tr></thead>
+          <tbody>
+            <tr><td>Puente del gasto</td><td><span class="acc">5.1.01.007</span> GASTOS DE IMPORTACION</td><td>Producto de servicio › Contabilidad › Cuenta de gastos</td><td>Débito en la factura; crédito al validar</td></tr>
+            <tr><td>Inventario</td><td><span class="acc">1.1.13.001</span> INVENTARIO VENTA</td><td>Categoría › Cuenta de inventario (y Ajustes de Contabilidad)</td><td>Débito al validar</td></tr>
+            <tr><td>Costo de venta</td><td><span class="acc">5.1.01.001</span> COSTO DE VENTAS MCIA NACIONAL</td><td>Categoría › Cuenta de gastos</td><td>No interviene en el costo en destino</td></tr>
+            <tr><td>Diario</td><td>STJ · Valuación de inventario</td><td>Inventario › Ajustes › Diario predeterminado (vacío = STJ)</td><td>Asiento del costo en destino</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>NIKKOSOFT Consultores C.A. · www.nikkosoft.net · Manual elaborado con capturas de alimentos-monteverde.odoo.com del 26/10/2026. Fuentes técnicas: código de <code>stock_landed_costs</code> y <code>stock_account</code> de Odoo 19.0.</footer>
+  </main>
+</div>
