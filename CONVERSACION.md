@@ -14,6 +14,7 @@ Resumen para retomar esta conversación. Fechas: 26 y 27/10/2026.
 | Localización | `nks_localizacion` (submódulo, rama 19.0). No hubo acceso a ese repo en la sesión. |
 | Módulos clave | `stock_landed_costs` 19.0.1.1, `mrp_landed_costs`, `account_dual_currency` 1.12.20, `nks_importaciones` 1.5.1, `nks_amv_ventas` 1.18.1 |
 | Sesión original | https://claude.ai/code/session_012G7rDzCGgXdqyg1cPT8wfi |
+| Repo de manuales | https://github.com/lstuard-gonzalez/manuales (privado), rama `2026-10-26-amv-costos-destino-importaciones` |
 
 Configuración de valuación en AMV: perpetua (al facturar), AVCO, cuenta de inventario `1.1.13.001 INVENTARIO VENTA`, diario `STJ · Valuación de inventario` (id 8). Moneda de la compañía VES; referencia USD.
 
@@ -52,6 +53,15 @@ Mensaje y audios del cliente: el filet se facturó a US$ 11,25/kg pero el costeo
   - ejecutó Compute y fijó el reparto: filet 45.458.948,20 Bs (US$ 51.294,92), ahumado 9.556.886,94 Bs (US$ 10.783,79);
   - **validó** LC/2026/0120 → asiento **STJ/2026/10/0010** (55.012.012,39 Bs; el ahumado capitalizó 4.998 de 5.000 kg porque 2 kg ya habían salido).
 - Resultado: último costo $ filet **14,7019**, ahumado **18,6568**. Costo promedio filet 12.907,09 Bs/kg (≈ US$ 14,56, mezcla con 1.946 kg anteriores); ahumado 16.534,12 Bs/kg.
+
+### 5. Repositorio de manuales (27/10)
+- Pedido: guardar todos los manuales en un repo git llamado `manuales`, en la cuenta personal del usuario (`lstuard-gonzalez`, no en Nikkosoft), con un `.md` de la conversación para retomarla, y **una rama por conversación**.
+- La integración de Claude no puede crear repos (403 en Nikkosoft y en la cuenta personal). El usuario creó `lstuard-gonzalez/manuales` vacío e instaló la app de Claude en su cuenta; después se hizo el push.
+- Estructura subida:
+  - `main`: solo `README.md` con la convención (`AAAA-MM-DD-cliente-tema`) y la tabla de conversaciones.
+  - `2026-10-26-amv-costos-destino-importaciones`: este archivo, `manuales/` (HTML + PDF de los dos manuales), `fuentes/` (Excel del salmón) y `tools/`.
+- Convención para las próximas conversaciones: crear una rama nueva con el mismo formato, con su `CONVERSACION.md`, y agregar su fila al índice de `main`.
+- Los manuales siguen también en el repo del cliente (`Nikkosoft/odoo-alimentos-monteverde`, `docs/manuales/`).
 
 ## Cambios hechos en producción por Claude
 
