@@ -63,6 +63,14 @@ Mensaje y audios del cliente: el filet se facturó a US$ 11,25/kg pero el costeo
 - Convención para las próximas conversaciones: crear una rama nueva con el mismo formato, con su `CONVERSACION.md`, y agregar su fila al índice de `main`.
 - Los manuales siguen también en el repo del cliente (`Nikkosoft/odoo-alimentos-monteverde`, `docs/manuales/`).
 
+### 6. Pago agrupado a MESAMAR (29/10)
+Video de Raquel: al marcar 4 facturas de MESAMAR la lista sumaba US$ 12.829,89, pero el asistente «Pagar» proponía US$ 12.800,095 (el total menos los US$ 29,80 de C003-00002025; la causa no se pudo reproducir porque las facturas ya estaban pagadas). Preguntaba si registrar un solo pago y cruzarlo factura por factura.
+
+- Raquel ya lo había hecho: pago **PZELBI/2026/00135** (US$ 12.829,88, diario CXC JORGE ZELLE-BINANCE (USD), fecha 28/10, tasa 888,1183) cruzado con C003-00002025, C003-00001955, C003-00001933 y FACT 1891.
+- Quedó un residuo de **US$ 0,015 (12,74 Bs)** en FACT 1891, porque C003-00001955 tiene tres decimales (3.413,985) y el pago solo dos.
+- Con autorización del usuario, Claude registró **OPVAR/2026/10/0176** (diario OPERACIONES VARIAS, 29/10): débito `2.1.02.001` MESAMAR 12,74 Bs (US$ 0,015), crédito `8.1.01.0006 OTROS INGRESOS VARIOS`, y lo concilió con FACT 1891, que quedó saldada.
+- FACT 1854 (US$ 237,08) sigue pendiente; no estaba en el pago.
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
@@ -70,6 +78,7 @@ Mensaje y audios del cliente: el filet se facturó a US$ 11,25/kg pero el costeo
 | 26/10 | LC/2026/0119 | Creado por error (borrador vacío) y luego **borrado** con autorización |
 | 26/10 | Factura C003-00001942 y asiento STJ/2026/10/0001 | Solo cambió la fecha de modificación al abrirlos (recálculo de la localización); sin cambios de montos |
 | 27/10 | LC/2026/0120 | Línea a US$ 62.078,71 y cuenta 5.1.01.007; reparto manual; **validado** |
+| 29/10 | OPVAR/2026/10/0176 | Ajuste de redondeo de US$ 0,015 (12,74 Bs) conciliado con FACT 1891 de MESAMAR |
 
 Todo lo demás fue de solo lectura.
 
@@ -82,7 +91,10 @@ Todo lo demás fue de solo lectura.
 - Ahumado: el costeo dice 18,65 pero con US$ 10.783,79 da 18,6568. Para 18,65 exacto el gasto sería US$ 10.750,00 (requiere otro costo en destino negativo por US$ 33,79).
 - Un costo en destino validado no se cancela: las correcciones van con otro costo en destino (negativo si hay que restar).
 
+- La empresa no tiene configurado el «Diario Asientos de Redondeo» (Contabilidad › Ajustes). El ajuste de MESAMAR usó OPERACIONES VARIAS y 8.1.01.0006; Contabilidad puede definir un diario y una cuenta propios.
+
 ## Lecciones técnicas (Odoo 19 + localización AMV)
+- Facturas con tres decimales en US$ dejan residuos de centavos al pagar (los pagos van a dos decimales); se cierran con un ajuste conciliado.
 
 - Abrir un formulario **«Nuevo»** y salir guarda el borrador (pasó con LC/2026/0119). Para capturas, no abrir formularios nuevos.
 - Abrir un **asiento o factura registrada** actualiza su fecha de modificación (recálculo de la localización dual) aunque no cambie nada.
