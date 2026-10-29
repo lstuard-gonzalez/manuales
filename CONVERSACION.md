@@ -71,6 +71,15 @@ Video de Raquel: al marcar 4 facturas de MESAMAR la lista sumaba US$ 12.829,89, 
 - Con autorización del usuario, Claude registró **OPVAR/2026/10/0176** (diario OPERACIONES VARIAS, 29/10): débito `2.1.02.001` MESAMAR 12,74 Bs (US$ 0,015), crédito `8.1.01.0006 OTROS INGRESOS VARIOS`, y lo concilió con FACT 1891, que quedó saldada.
 - FACT 1854 (US$ 237,08) sigue pendiente; no estaba en el pago.
 
+### 7. Validación de la Relación de pagos (29/10)
+Danny reenvió «Relación de pagos (33).pdf» (149 pagos del 27/10, creados por Aribel Beltran, BANCO MERCANTIL 0312) para validar los montos contra la base de datos: creía que el reporte traía la tasa BCV en lugar de la tasa que pone la usuaria.
+
+- El reporte coincide con la base de datos en los 149 pagos (tasa = `tax_today`, Importe Bs = `amount_company_currency_signed` = asiento). Versión en producción: `nks_amv_ventas` 1.18.4 (ramas `main`/`staging` del repo del cliente).
+- 10 de los 36 pagos en $ están contabilizados con otra tasa (8 a la BCV 887,302 y 2 a otra tasa). Diferencia total: 303.090,52 Bs. En los 10 casos el pago se restableció a borrador, se editó y se reconfirmó: la localización (`account_dual_currency`) recalcula el asiento sin respetar la tasa del pago.
+- Número repetido: PMERC1/2026/00253 (un pago anulado de Johana Matute y el vigente de Aribel).
+- Entrega: `manuales/validacion-relacion-pagos/` (PDF de 3 páginas para el consultor). Fuente: `fuentes/Relacion_de_pagos_33.pdf`.
+- No se corrigió nada: corregir los 10 asientos está pendiente de decisión (9 están conciliados con facturas).
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
@@ -93,7 +102,11 @@ Todo lo demás fue de solo lectura.
 
 - La empresa no tiene configurado el «Diario Asientos de Redondeo» (Contabilidad › Ajustes). El ajuste de MESAMAR usó OPERACIONES VARIAS y 8.1.01.0006; Contabilidad puede definir un diario y una cuenta propios.
 
+- Corregir los asientos de los 10 pagos con tasa equivocada (relación de pagos del 27/10) y reportar el defecto de reconfirmación a la localización.
+- FACT 1854 de MESAMAR (US$ 237,08): registrar el pago cuando se sepa el diario y la fecha.
+
 ## Lecciones técnicas (Odoo 19 + localización AMV)
+- Restablecer a borrador y reconfirmar un pago en $ con tasa propia lo recalcula a la BCV (o a otra tasa): para corregir un pago confirmado, anularlo y crear uno nuevo.
 - Facturas con tres decimales en US$ dejan residuos de centavos al pagar (los pagos van a dos decimales); se cierran con un ajuste conciliado.
 
 - Abrir un formulario **«Nuevo»** y salir guarda el borrador (pasó con LC/2026/0119). Para capturas, no abrir formularios nuevos.
