@@ -80,6 +80,13 @@ Danny reenvió «Relación de pagos (33).pdf» (149 pagos del 27/10, creados por
 - Entrega: `manuales/validacion-relacion-pagos/` (PDF de 3 páginas para el consultor). Fuente: `fuentes/Relacion_de_pagos_33.pdf`.
 - No se corrigió nada: corregir los 10 asientos está pendiente de decisión (9 están conciliados con facturas).
 
+### 8. Retención de IVA de GRUPO FERREIRA 001 (02/11)
+El proveedor (J-50792517-0) rechazó el comprobante de retención de IVA 20261000000013 (factura fiscal 00000044, control ZZP0023188, 30/10/2026, total 1.760.500,26 Bs, IVA 220.273,06 Bs): decía factura 00000043 y retención del 75% (165.204,80 Bs); debía ser 00000044 y 100%.
+
+- Causas: la ficha del proveedor tenía «% Retención de IVA» = 75, y el comprobante toma el número de factura del campo **Referencia** de la factura (00000043), no de «Número de factura del proveedor» (00000044).
+- El comprobante no se había declarado. Con autorización del usuario, Claude: puso el proveedor al 100%, cambió la Referencia de C003-00001955 a 00000044, canceló el comprobante (id 443; su asiento IVAC/2026/10/0014 quedó cancelado), confirmó la factura y confirmó la retención nueva (id 467).
+- Resultado: comprobante **20261000000013** (la localización reutilizó el mismo número), 100%, 220.273,06 Bs, factura 00000044; asiento IVAC/2026/10/0015. Saldo por pagar de la factura: 1.540.227,20 Bs.
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
@@ -87,6 +94,7 @@ Danny reenvió «Relación de pagos (33).pdf» (149 pagos del 27/10, creados por
 | 26/10 | LC/2026/0119 | Creado por error (borrador vacío) y luego **borrado** con autorización |
 | 26/10 | Factura C003-00001942 y asiento STJ/2026/10/0001 | Solo cambió la fecha de modificación al abrirlos (recálculo de la localización); sin cambios de montos |
 | 27/10 | LC/2026/0120 | Línea a US$ 62.078,71 y cuenta 5.1.01.007; reparto manual; **validado** |
+| 02/11 | GRUPO FERREIRA 001 / C003-00001955 / retención IVA | Proveedor al 100%, Referencia 00000044, comprobante 443 cancelado y nuevo comprobante 20261000000013 al 100% (id 467) |
 | 29/10 | OPVAR/2026/10/0176 | Ajuste de redondeo de US$ 0,015 (12,74 Bs) conciliado con FACT 1891 de MESAMAR |
 
 Todo lo demás fue de solo lectura.
@@ -106,6 +114,7 @@ Todo lo demás fue de solo lectura.
 - FACT 1854 de MESAMAR (US$ 237,08): registrar el pago cuando se sepa el diario y la fecha.
 
 ## Lecciones técnicas (Odoo 19 + localización AMV)
+- El comprobante de retención de IVA imprime como número de factura el campo **Referencia** de la factura de proveedor. Al cancelar y regenerar una retención, la localización reutiliza el número asignado (`iva_number_asignado`).
 - Restablecer a borrador y reconfirmar un pago en $ con tasa propia lo recalcula a la BCV (o a otra tasa): para corregir un pago confirmado, anularlo y crear uno nuevo.
 - Facturas con tres decimales en US$ dejan residuos de centavos al pagar (los pagos van a dos decimales); se cierran con un ajuste conciliado.
 
