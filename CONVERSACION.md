@@ -87,6 +87,20 @@ El proveedor (J-50792517-0) rechazó el comprobante de retención de IVA 2026100
 - El comprobante no se había declarado. Con autorización del usuario, Claude: puso el proveedor al 100%, cambió la Referencia de C003-00001955 a 00000044, canceló el comprobante (id 443; su asiento IVAC/2026/10/0014 quedó cancelado), confirmó la factura y confirmó la retención nueva (id 467).
 - Resultado: comprobante **20261000000013** (la localización reutilizó el mismo número), 100%, 220.273,06 Bs, factura 00000044; asiento IVAC/2026/10/0015. Saldo por pagar de la factura: 1.540.227,20 Bs.
 
+### 9. Pagos y cobros de Profit sin contrapartida (02/11)
+Pedido: revisar los cobros/pagos cargados desde Profit que deben tener contrapartida en Odoo (contra el saldo inicial de bancos), sin conexión a Profit.
+- 1.673 pagos de Profit (OdooBot, 01/10–29/10) en cuentas transitorias. Apertura de bancos y cajas al 30/09 = saldo de libros de Profit contra la puente `3.9.01.001`. Extractos cargados solo para los bancos en Bs (01/10–28/10).
+- 1.015 conciliados con extracto; 68 con línea libre en el extracto (25,5 MM Bs); 2 dobles (Banco del Tesoro, ref. 122554603: la línea del extracto se concilió directo contra la CxC de INVERSIONES SUSHI EXPRES GM, saldo a favor falso de −16.336.952 Bs); 486 en cuentas sin extractos (Regions, Zelle-Binance, Efectivo $, Banco de Venezuela, Caja, Mercantil Panamá, Amerant); 99 sin rastro en el extracto de octubre (25,0 MM Bs: candidatos a estar ya en el saldo de apertura).
+- Mercantil Panamá y Amerant quedarían en −US$ 181 mil y −US$ 292 mil: faltan los fondeos (de Profit solo se migraron cobros y pagos, no los movimientos de banco).
+- Entrega: `manuales/pagos-profit-contrapartida/Pagos-Profit-sin-contrapartida-AMV.xlsx`. Se propuso cómo corregir; no se aplicó nada (pendiente de autorización: Tesoro y los 68).
+
+### 10. Comisiones del 1.er corte de octubre, Odoo contra Profit (02/11)
+Reportes de Profit «Comisiones por cobros» 01/10–15/10 de 8 vendedores contra el corte confirmado de Odoo (nks_amv_comisiones).
+- Profit US$ 7.273,31 contra Odoo US$ 5.078,79 (−2.194,52). Por tasa −2.313,12: Profit corrió 3% fijo; Odoo paga el adelanto del 2% en el corte del 15 (grupos con escala) y completa al cierre según cumplimiento. Por base +118,40 netos.
+- Causas de base: N/DB de diferencial (Profit las comisiona aparte; Odoo aplica todo a la factura con tope), notas de crédito (Profit resta), retenciones de IVA (Profit comisiona), 6 facturas con otro vendedor en Odoo, cobros del 15/10 aplicados el 16/10 en Odoo, 8 documentos de María que Profit no trae.
+- Error de Odoo: comisiona AJPM cuyo cliente es el propio vendedor (Albert 11124, Manuel 11120, María 11121).
+- Entrega: `manuales/comisiones-1er-corte-octubre/` (PDF de 3 páginas + Excel por documento). No se modificó nada.
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
@@ -112,6 +126,9 @@ Todo lo demás fue de solo lectura.
 
 - Corregir los asientos de los 10 pagos con tasa equivocada (relación de pagos del 27/10) y reportar el defecto de reconfirmación a la localización.
 - FACT 1854 de MESAMAR (US$ 237,08): registrar el pago cuando se sepa el diario y la fecha.
+
+- Corregir el doble del Banco del Tesoro y conciliar los 68 cobros de Profit con línea libre en el extracto; cargar extractos de las cuentas en $ y registrar los fondeos de Mercantil Panamá y Amerant.
+- Comisiones: excluir los AJPM del propio vendedor en nks_amv_comisiones y decidir con el cliente diferencial, retenciones y notas de crédito.
 
 ## Lecciones técnicas (Odoo 19 + localización AMV)
 - El comprobante de retención de IVA imprime como número de factura el campo **Referencia** de la factura de proveedor. Al cancelar y regenerar una retención, la localización reutiliza el número asignado (`iva_number_asignado`).
