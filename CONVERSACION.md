@@ -157,7 +157,19 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
     - 45317892, 1.144.130 Bs: INVERSIONES TOMI (PBNK2/2026/00136) y GARY JOSE ALVAREZ (E002-00018744).
   - Los otros 3 pares son comisiones registradas dos veces.
   - BNK2/2026/01069 (en saldos por identificar) tiene su gemela libre en BNK2/2026/01184.
-- No se modificó nada.
+- No se modificó nada en la revisión.
+- **Corrección (autorizada: «corrígelo»):**
+  - 5 identificaciones en SIN IDENTIFICAR (Dr 1.1.03.001 / Cr transitoria de cobros del banco, conciliadas): MISC1/2026/10/0002 (A&B BOOKCAFE), 0003 (RANZAY, en US$), 0004 (SUCE EL VIÑEDO, en US$), 0005 (JALULA, con 0,60 Bs a 8.2.01.0007) y 0006 (ENMANUEL). Los 5 cobros pasaron a «Pagado». 1.1.03.001 bajó de −87.325.309,72 a −85.552.382,37 Bs.
+  - APER/2026/10/0001 (en 0, CRUDOS) eliminado.
+  - Banesco 7128: se borraron 145 líneas duplicadas, por 19.560.805,23 Bs:
+    - 135 del 27/10 y del 29/10, que estaban repetidas entre los estados 35/41 y 41/42.
+    - 9 del 19/10, repetidas entre los estados 27 y 35.
+    - BNK2/2026/01184.
+  - En cada par se conservó la copia conciliada. Las 38 que quedaron en un estado que no era el de su fecha se movieron a su estado.
+  - CHANTILLY: se deshizo la conciliación de 0,16 Bs con la copia sobrante. Los 0,16 se cerraron con OPVAR/2026/10/0179.
+  - Los estados 35, 41 y 42 quedaron encadenados, completos y válidos. Los estados empiezan en 0 el 01/10, así que su saldo no es el del banco.
+  - Saldo contable de 1.1.04.001 al 30/10: 20.259.073,59 Bs. Al resolver los 2 pares pendientes quedará en 19.074.762,05 Bs. **Johan debe compararlo con el saldo real de Banesco.**
+  - Scripts y registros en `tools/historial/`: fix_ssid.py, fix_aper.py, exec_bnk2.py, exec19.py, chant*.py y *_log.json.
 
 ## Cambios hechos en producción por Claude
 
@@ -170,6 +182,9 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
 | 02/11 | GRUPO FERREIRA 001 / C003-00001955 / retención IVA | Proveedor al 100%, Referencia 00000044, comprobante 443 cancelado y nuevo comprobante 20261000000013 al 100% (id 467) |
 | 03/11 | 9 recibos C003-00002080..87 y 00093, pagos PBNK2/2026/00203..00210 | Fecha 27/11 → 27/10, misma tasa, conciliados otra vez |
 | 03/11 | EXCH del 29/11 (40 asientos) | Pasados a octubre (EXCH/2026/10/2300–2341); OPVAR/2026/10/0177 y 0178 cierran centavos |
+| 03/11 | MISC1/2026/10/0002–0006 | 5 depósitos sacados de 1.1.03.001 y conciliados con sus cobros (PMERC1/00423, 00159, 00426, 00425; PBNK2/00118) |
+| 03/11 | APER/2026/10/0001 | Asiento en 0 (CRUDOS) eliminado |
+| 03/11 | Banesco 7128 (estados 27, 35, 41, 42) | 145 líneas duplicadas borradas (19.560.805,23 Bs), 38 movidas a su estado, saldos de los estados reencadenados; OPVAR/2026/10/0179 cierra 0,16 Bs de CHANTILLY |
 
 Todo lo demás fue de solo lectura.
 
@@ -183,8 +198,8 @@ Todo lo demás fue de solo lectura.
 - **10 pagos con tasa equivocada** (relación de pagos del 27/10): corregir sus asientos.
 - **Libros fiscales:** borrar el primer libro de compras (15/10–31/10) y el libro de ventas «PRUEBA»; corregir los RIF «VFalse» (NANTONG, FARMERS) antes de confirmar; crear los libros de la 1.ª quincena de octubre si se declara desde Odoo.
 
-- **Saldos por identificar:** conciliar 20400501388 con PMERC1/2026/00429 (EUROBUILDING); corregir MISC1/2026/10/0001 (SOJA) y eliminar el borrador sobrante del diario SIN IDENTIFICAR. Sacar de 1.1.03.001 los 5 depósitos que ya tienen cobro (sección 16) y anular APER/2026/10/0001 (en 0, CRUDOS).
-- **Banesco 7128, extracto del 27/10 duplicado** (estado 41): deshacer las conciliaciones de las gemelas y borrar las 106 líneas; decidir a qué cliente corresponden los depósitos 940036690 y 45317892.
+- **Saldos por identificar:** conciliar 20400501388 con PMERC1/2026/00429 (EUROBUILDING); corregir MISC1/2026/10/0001 (SOJA) y eliminar el borrador sobrante del diario SIN IDENTIFICAR. Los cobros reales de CRUDOS para el depósito 20444471393 (2.513.273 Bs).
+- **Banesco 7128:** decidir a qué cliente corresponden los depósitos 940036690 (40.181,54: EMPRENDIMIENTO MORA o CALIENTICOS LECHERIA) y 45317892 (1.144.130: INVERSIONES TOMI o GARY JOSE ALVAREZ). Después: deshacer la conciliación equivocada, borrar su copia del estado 41 y reencadenar los saldos. Comparar el saldo contable de 1.1.04.001 con el banco.
 
 **Contabilidad y configuración**
 - Crear el modelo de conciliación «SALDO POR IDENTIFICAR» y decidir el tipo de la cuenta 1.1.03.001.
