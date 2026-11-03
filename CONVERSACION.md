@@ -141,6 +141,24 @@ Pedido: camino y forma de registrar los depósitos sin identificar y sacarlos de
   - Razón: las comisiones (`nks_amv_comisiones`) solo cuentan diarios de banco/caja y APERTURA (`nks_comision_diario_cobro_ids` = [432]). Un crédito hecho en SIN IDENTIFICAR contra la CxC no comisiona ni sale en la relación de pagos; queda solo como excepción (5.3).
   - PDF v2 de 18 páginas.
 
+### 16. Cruce de cobros y pagos contra saldos por identificar (03/11)
+Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la apertura SSID de Profit) contra 2.575 pagos, por referencia y por monto.
+- **Cobro real ya registrado por cobranzas (Aribel Beltran), con el depósito todavía en 1.1.03.001** (fase 1 hecha por Johana Matute). Falta la fase 2.2 o desconciliar la línea del extracto y conciliarla con el cobro:
+  - MERC1/2026/01762, ref. 20400628461, 203.342,18 Bs → PMERC1/2026/00423 A&B BOOKCAFE.
+  - MERC1/2026/01813, ref. 82558155741, 230.320,00 Bs → PMERC1/2026/00159 RANZAY INFANTE (US$ 230,32).
+  - MERC1/2026/01863, ref. 20419070519, 982.890,00 Bs → PMERC1/2026/00426 SUCE EL VIÑEDO (US$ 978).
+  - MERC1/2026/01938, ref. 20445559679, 264.095,97 Bs → PMERC1/2026/00425 JALULA (264.096,57: el cobro tiene 0,60 Bs de más).
+  - BNK2/2026/01069, ref. 50319205, 92.279,20 Bs → probable PBNK2/2026/00118 INVERSIONES ENMANUEL. Coincide solo el monto: el memo del cobro es la factura E001-00018401. Hay que confirmarlo.
+- **APER/2026/10/0001** (Aribel, 29/10): asiento en 0, ref. 20444471393 (depósito MERC1/2026/01582 de 2.513.273 Bs en 1.1.03.001), con las CxC de 4 empresas CRUDOS. Ningún cobro de CRUDOS lleva esa referencia.
+- 20 apuntes (−3.496.840,94 Bs) sin ningún cobro relacionado.
+- **Hallazgo aparte: el extracto de Banesco 7128 del 27/10 está cargado dos veces.** El estado 35 lo cargó Johan Olivo el 28/10; el estado 41, «del 2026-10-29», se cargó el 30/10 con 115 líneas del 27/10, de las cuales 106 son gemelas (18.103.210,85 Bs netos de más en el banco).
+  - En 5 pares están conciliadas las dos copias. Dos son depósitos aplicados a dos clientes distintos:
+    - 940036690, 40.181,54 Bs: EMPRENDIMIENTO MORA (PBNK2/2026/00157) y CALIENTICOS LECHERIA (F003-00001344).
+    - 45317892, 1.144.130 Bs: INVERSIONES TOMI (PBNK2/2026/00136) y GARY JOSE ALVAREZ (E002-00018744).
+  - Los otros 3 pares son comisiones registradas dos veces.
+  - BNK2/2026/01069 (en saldos por identificar) tiene su gemela libre en BNK2/2026/01184.
+- No se modificó nada.
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
@@ -165,7 +183,8 @@ Todo lo demás fue de solo lectura.
 - **10 pagos con tasa equivocada** (relación de pagos del 27/10): corregir sus asientos.
 - **Libros fiscales:** borrar el primer libro de compras (15/10–31/10) y el libro de ventas «PRUEBA»; corregir los RIF «VFalse» (NANTONG, FARMERS) antes de confirmar; crear los libros de la 1.ª quincena de octubre si se declara desde Odoo.
 
-- **Saldos por identificar:** conciliar 20400501388 con PMERC1/2026/00429 (EUROBUILDING); corregir MISC1/2026/10/0001 (SOJA) y eliminar el borrador sobrante del diario SIN IDENTIFICAR.
+- **Saldos por identificar:** conciliar 20400501388 con PMERC1/2026/00429 (EUROBUILDING); corregir MISC1/2026/10/0001 (SOJA) y eliminar el borrador sobrante del diario SIN IDENTIFICAR. Sacar de 1.1.03.001 los 5 depósitos que ya tienen cobro (sección 16) y anular APER/2026/10/0001 (en 0, CRUDOS).
+- **Banesco 7128, extracto del 27/10 duplicado** (estado 41): deshacer las conciliaciones de las gemelas y borrar las 106 líneas; decidir a qué cliente corresponden los depósitos 940036690 y 45317892.
 
 **Contabilidad y configuración**
 - Crear el modelo de conciliación «SALDO POR IDENTIFICAR» y decidir el tipo de la cuenta 1.1.03.001.
