@@ -110,7 +110,11 @@ Reportes de Profit «Comisiones por cobros» 01/10–15/10 de 8 vendedores contr
 ### 12. Cobros/pagos con fecha 27/11 en vez de 27/10 (03/11)
 - 9 recibos de gasto de Barbara Bernal (GASTOS NO FISCALES, C003-00002080 a 00087 y 00093) y 8 pagos del Banesco (PBNK2/2026/00203 a 00210), todos en Bs, con fecha 27/11/2026.
 - Con autorización del usuario, Claude los pasó a borrador, les puso fecha 27/10/2026 (fecha contable y de factura), conservó la tasa que puso la usuaria, los confirmó y volvió a conciliar cada recibo con su pago. El pago del recibo C003-00002093 (PBNK2/2026/00222) ya estaba al 27/10. Verificado: 0 pagos con fecha futura.
-- Pendiente de autorización: 38 asientos EXCH del 29/11 (Aribel). 18 pares ya revertidos (neto 0) y 2 activos: EXCH/2026/11/0014 (SUPER D´CARLOS 6.601,69 Bs, PBCRE/2026/00003 – F001-00004106) y EXCH/2026/11/0018 (NUEVO SIGLO 158,89 Bs, PPRVC1/2026/00037 – F001-00004357). Nacieron cuando esos cobros tenían fecha 29/11.
+- EXCH del 29/11 (Aribel), corregidos con autorización del usuario:
+  - EXCH/2026/11/0014 (SUPER D´CARLOS) y 0018 (NUEVO SIGLO), activos: se rehizo la conciliación del cobro con su factura; Odoo revirtió los del 29/11 y creó EXCH/2026/10/2301 (6.874,68 Bs) y 2300 (84,28 Bs) con fecha 31/10. Con la fecha correcta del cobro (29/10, BCV 888,8909) quedaba un residuo en US$ (0,3161 y 0,0949) que se cerró contra `8.2.01.0007` (OPVAR/2026/10/0178 por 272,99 Bs y 0177 por 84,28 Bs): ambas facturas quedan pagadas.
+  - Los 20 pares (original + reversión, neto 0) se pasaron al 29/10 con números nuevos EXCH/2026/10/2302 a 2341 (Odoo exige limpiar el número de noviembre para cambiar de mes). Quedan huecos en la secuencia EXCH/2026/11.
+  - Verificado: 0 asientos y 0 pagos con fecha futura; 0 borradores en EXCH.
+- Lección: rehacer por RPC una conciliación de cobro en Bs con factura en US$ usa la BCV de la fecha del cobro, no la tasa del pago; puede dejar centavos en US$ que hay que cerrar.
 
 ## Cambios hechos en producción por Claude
 
@@ -121,6 +125,7 @@ Reportes de Profit «Comisiones por cobros» 01/10–15/10 de 8 vendedores contr
 | 27/10 | LC/2026/0120 | Línea a US$ 62.078,71 y cuenta 5.1.01.007; reparto manual; **validado** |
 | 02/11 | GRUPO FERREIRA 001 / C003-00001955 / retención IVA | Proveedor al 100%, Referencia 00000044, comprobante 443 cancelado y nuevo comprobante 20261000000013 al 100% (id 467) |
 | 03/11 | 9 recibos C003-00002080..87 y 00093, pagos PBNK2/2026/00203..00210 | Fecha 27/11 → 27/10, misma tasa, reconciliados |
+| 03/11 | EXCH del 29/11 (40 asientos) | Pasados al 29/10 (EXCH/2026/10/2300–2341); OPVAR/2026/10/0177 y 0178 cierran centavos |
 | 29/10 | OPVAR/2026/10/0176 | Ajuste de redondeo de US$ 0,015 (12,74 Bs) conciliado con FACT 1891 de MESAMAR |
 
 Todo lo demás fue de solo lectura.
