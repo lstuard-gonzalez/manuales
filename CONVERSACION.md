@@ -125,6 +125,16 @@ Captura de la conciliación bancaria de la línea del 08/10, ref. 20418507667, B
 - **Verificado:** 0 asientos y 0 pagos con fecha futura; 0 borradores en EXCH.
 - Se entregó un resumen corto para el consultor (en el chat).
 
+### 15. Saldos por identificar (03/11)
+Pedido: camino y forma de registrar los depósitos sin identificar y sacarlos de la cuenta al identificarlos, con PDF para consultor y usuario. Ejemplo: 02/10/2026, ref. 20400501388, crédito inmediato Cámara de Compensación, 414.562,89 Bs.
+- Configuración existente: cuenta **1.1.03.001 SALDOS POR IDENTIFICAR** (conciliable, tipo activo corriente con saldo acreedor) y diario **SIN IDENTIFICAR** (MISC1).
+- Camino definido: corto (si se conoce el cliente: «Definir contacto» y conciliar con el cobro) o largo: fase 1 «Establecer cuenta» 1.1.03.001 en la conciliación bancaria; fase 2 asiento en SIN IDENTIFICAR (Dr 1.1.03.001 / Cr CxC cliente); fase 3 conciliar las dos líneas de 1.1.03.001 y aplicar el crédito a las facturas.
+- Ejemplo: es de EUROBUILDING INTERNACIONAL; el cobro PMERC1/2026/00429 ya existe y está aplicado al cliente, pero la línea del extracto (MERC1/2026/00167) sigue sin conciliar.
+- Pendientes de 1.1.03.001 al 03/11: 39 apuntes, −87.325.309,72 Bs (11 SSID de apertura, 25 Mercantil, 2 Banesco, 1 identificación).
+- Hallazgos: MISC1/2026/10/0001 (SOJA, 376.954,19 Bs, ref. 20418369711) identifica un depósito que nunca entró a 1.1.03.001 (su línea de 421.785,00 Bs sigue sin conciliar); borrador sobrante en SIN IDENTIFICAR (5.686,69 Bs, duplica MERC1/2026/01548).
+- Recomendaciones: modelo de conciliación «SALDO POR IDENTIFICAR»; revisar el tipo de la cuenta.
+- Entrega: `manuales/saldos-por-identificar/` (HTML + PDF de 15 páginas con capturas). No se modificó nada (abrir la factura E001-00018944 solo cambió su fecha de modificación).
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
@@ -149,7 +159,10 @@ Todo lo demás fue de solo lectura.
 - **10 pagos con tasa equivocada** (relación de pagos del 27/10): corregir sus asientos.
 - **Libros fiscales:** borrar el primer libro de compras (15/10–31/10) y el libro de ventas «PRUEBA»; corregir los RIF «VFalse» (NANTONG, FARMERS) antes de confirmar; crear los libros de la 1.ª quincena de octubre si se declara desde Odoo.
 
+- **Saldos por identificar:** conciliar 20400501388 con PMERC1/2026/00429 (EUROBUILDING); corregir MISC1/2026/10/0001 (SOJA) y eliminar el borrador sobrante del diario SIN IDENTIFICAR.
+
 **Contabilidad y configuración**
+- Crear el modelo de conciliación «SALDO POR IDENTIFICAR» y decidir el tipo de la cuenta 1.1.03.001.
 - **H1:** asignar cuenta de gastos `5.1.01.007` al producto 1319 (o a la categoría GASTOS OTROS). LC/2026/0120 ya usó 5.1.01.007 en su línea, pero el producto sigue sin cuenta.
 - **H2:** crear el costo en destino de la factura C003-00001942.
 - **Planilla en el libro de compras:** los campos Nº planilla / fecha / expediente / «Factura SENIAT» solo aparecen si el proveedor es empresa **PJND**. NANTONG está como persona PNNR y SENIAT como persona PNRE. Probar en staging cómo entra la planilla como «Importación» al libro de compras.

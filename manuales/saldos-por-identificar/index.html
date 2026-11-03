@@ -1,0 +1,367 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Saldos por identificar AMV</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"><style>
+/* Layout: índice fijo a la izquierda en escritorio, columna de lectura de 760px; las capturas salen a 1040px. */
+:root {
+  --bg: #F7F5FA;          /* Snow */
+  --surface: #FFFFFF;
+  --card: #EEEAF2;        /* Mist */
+  --line: #E0DDE4;        /* Smoke */
+  --ink: #212121;
+  --ink-strong: #241b36;  /* Azul profundo */
+  --muted: #5f5873;
+  --accent: #ff8c00;      /* Naranja principal */
+  --accent-2: #fb6419;
+  --accent-ink: #b45a00;  /* naranja legible sobre claro */
+  --soft: #FFF3E0;
+  --ok: #1f7a4d;
+  --ok-soft: #e6f4ec;
+  --warn: #9a4a00;
+  --warn-soft: #fff3e0;
+  --bad: #b42318;
+  --bad-soft: #fdecea;
+  --font-display: 'Geist', 'Inter', 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Geist', 'Inter', 'Open Sans', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+  --shadow: 0 2px 8px rgba(36,27,54,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17121f; --surface: #1f1929; --card: #2a2236; --line: #3a3147;
+    --ink: #ebe7f2; --ink-strong: #ffffff; --muted: #a8a8c7;
+    --accent: #ff9d2e; --accent-2: #fb7a3a; --accent-ink: #ffb054; --soft: #33240f;
+    --ok: #6fd3a0; --ok-soft: #173326; --warn: #ffb054; --warn-soft: #33240f; --bad: #ff8f85; --bad-soft: #3a1b1a;
+    --shadow: 0 2px 8px rgba(0,0,0,0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17121f; --surface: #1f1929; --card: #2a2236; --line: #3a3147;
+  --ink: #ebe7f2; --ink-strong: #ffffff; --muted: #a8a8c7;
+  --accent: #ff9d2e; --accent-2: #fb7a3a; --accent-ink: #ffb054; --soft: #33240f;
+  --ok: #6fd3a0; --ok-soft: #173326; --warn: #ffb054; --warn-soft: #33240f; --bad: #ff8f85; --bad-soft: #3a1b1a;
+  --shadow: 0 2px 8px rgba(0,0,0,0.35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6; letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.topbar { height: 6px; background: var(--accent); }
+.wrap {
+  display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px;
+  max-width: 1360px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+}
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 14px; }
+nav.toc .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; color: var(--ink-strong); font-weight: 600; }
+nav.toc .brand img { width: 28px; height: 28px; border-radius: 6px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+nav.toc a { display: block; padding: 6px 10px; border-radius: 8px; color: var(--muted); text-decoration: none; }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--card); color: var(--ink-strong); outline: none; }
+nav.toc .sub a { padding-left: 22px; font-size: 13px; }
+main { min-width: 0; }
+.col { max-width: 760px; }
+header.cover { padding-bottom: 32px; border-bottom: 1px solid var(--line); margin-bottom: 40px; }
+.eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-ink); font-weight: 600; }
+h1 { font-family: var(--font-display); font-size: clamp(32px, 5vw, 44px); line-height: 1.12; letter-spacing: -0.02em; color: var(--ink-strong); margin: 8px 0 12px; text-wrap: balance; }
+.lede { font-size: 18px; color: var(--muted); max-width: 64ch; margin: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 20px; font-size: 13px; color: var(--muted); }
+.meta b { color: var(--ink); font-weight: 600; }
+section { padding-top: 16px; margin-bottom: 56px; scroll-margin-top: 24px; }
+h2 { font-family: var(--font-display); font-size: 28px; line-height: 1.2; color: var(--ink-strong); margin: 0 0 12px; text-wrap: balance; }
+h2 .n { color: var(--accent); margin-right: 10px; font-variant-numeric: tabular-nums; }
+h3 { font-family: var(--font-display); font-size: 20px; line-height: 1.3; color: var(--ink-strong); margin: 36px 0 8px; text-wrap: balance; scroll-margin-top: 24px; }
+p { margin: 0 0 14px; max-width: 68ch; }
+ul, ol { margin: 0 0 14px; padding-left: 22px; max-width: 68ch; }
+li { margin-bottom: 6px; }
+a { color: var(--accent-ink); }
+code, .mono { font-family: var(--font-mono); font-size: 0.88em; background: var(--card); padding: 1px 6px; border-radius: 4px; }
+.path { font-family: var(--font-body); font-weight: 600; color: var(--ink-strong); background: var(--card); padding: 2px 8px; border-radius: 6px; white-space: normal; }
+strong { color: var(--ink-strong); }
+
+figure { margin: 20px 0 28px; max-width: 1040px; }
+figure img { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); box-shadow: var(--shadow); background: #fff; }
+figcaption { font-size: 13px; line-height: 1.5; color: var(--muted); margin-top: 10px; max-width: 90ch; }
+figcaption .tag { font-weight: 600; color: var(--ink); }
+.marks { counter-reset: m; list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 4px; font-size: 14px; }
+.marks li { position: relative; padding-left: 32px; margin: 0; min-height: 22px; }
+.marks li::before { counter-increment: m; content: counter(m); position: absolute; left: 0; top: 0; width: 22px; height: 22px; border-radius: 50%; background: #E8501B; color: #fff; font: 700 12px/22px var(--font-body); text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+.why { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 14px 18px; margin: 16px 0 20px; max-width: 760px; }
+.why .k { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; color: var(--accent-ink); display: block; margin-bottom: 4px; }
+.why p:last-child { margin-bottom: 0; }
+
+.find { border-radius: 12px; padding: 16px 18px; margin: 14px 0; max-width: 760px; border: 1px solid var(--line); background: var(--surface); }
+.find .h { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 6px; }
+.find .h strong { font-size: 16px; }
+.pill { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.find p:last-child { margin-bottom: 0; }
+
+.tbl { overflow-x: auto; margin: 14px 0 22px; max-width: 1040px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; background: var(--card); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td .acc { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+
+.ledger { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 18px 0 24px; max-width: 1040px; }
+.entry { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.entry .when { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+.entry h4 { margin: 4px 0 10px; font-size: 16px; color: var(--ink-strong); font-family: var(--font-display); }
+.entry table { font-size: 13px; }
+.entry th, .entry td { padding: 7px 8px; }
+.entry .note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+.dr { color: var(--ink); } .cr { color: var(--muted); }
+
+.steps { list-style: none; padding: 0; counter-reset: st; display: grid; gap: 10px; max-width: 760px; }
+.steps > li { counter-increment: st; display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 12px; margin: 0; }
+.steps > li::before { content: counter(st); width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--accent); color: var(--accent-ink); font: 700 14px/26px var(--font-body); text-align: center; }
+
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin: 16px 0 22px; max-width: 1040px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-width: 0; }
+.kpi .l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.kpi .v { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--ink-strong); font-variant-numeric: tabular-nums; line-height: 1.25; margin-top: 4px; }
+.kpi .s { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.kpi.hi .v { color: var(--accent-ink); }
+
+.errs { display: grid; gap: 10px; max-width: 900px; margin: 14px 0; }
+.err { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.err > div { padding: 12px 14px; font-size: 14px; min-width: 0; }
+.err > div:first-child { background: var(--bad-soft); }
+.err > div:last-child { background: var(--ok-soft); }
+
+footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px; font-size: 13px; color: var(--muted); }
+
+@media (max-width: 980px) {
+  .wrap { grid-template-columns: minmax(0,1fr); gap: 24px; padding-block: 24px 64px; }
+  nav.toc { position: static; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+}
+@media (max-width: 640px) {
+  .ledger, .kpis, .err { grid-template-columns: minmax(0,1fr); }
+  h2 { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+@media print {
+  body { font-size: 10.5pt; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  figure img { max-height: 125mm; width: auto; max-width: 100%; margin: 0 auto; }
+  body::before, .topbar, nav.toc { display: none; }
+  .wrap { display: block; max-width: none; padding: 0; }
+  .col, p, ul, ol { max-width: none; }
+  header.cover { margin-bottom: 20px; }
+  section { margin-bottom: 20px; padding-top: 0; }
+  h2 { break-after: avoid; margin-top: 8px; }
+  h3 { break-after: avoid; margin-top: 18px; }
+  figure, .find, .entry, .err, .kpi, .why, .tbl, .steps > li, .ledger, .kpis { break-inside: avoid; }
+  figure { margin: 10px 0 16px; }
+  figure img { box-shadow: none; }
+  section#config, section#corto, section#fase2, section#control, section#hallazgos { break-before: page; }
+}
+</style><style>@media print{.tbl{overflow:visible;max-width:none} .tbl table{font-size:8.5pt} figure img{max-height:118mm;width:auto;max-width:100%} .ledger{grid-template-columns:minmax(0,1fr)!important;gap:8px} .entry{padding:10px 14px}}</style></head><body>
+<div class="wrap" style="display:block;max-width:1000px">
+  <main>
+    <header class="cover col">
+      <div class="eyebrow">Alimentos MonteVerde C.A. · Odoo 19 · Tesorería</div>
+      <h1>Saldos por identificar: registrar, identificar y reclasificar</h1>
+      <p class="lede">El camino completo de un depósito que llega al banco sin que se sepa de quién es: dónde se registra, cómo se saca de la cuenta de saldos por identificar cuando se identifica y cómo se aplica al cliente. Manual para el consultor y el usuario, con capturas de producción del 03/11/2026.</p>
+      <div class="meta">
+        <span><b>Cuenta</b> 1.1.03.001 SALDOS POR IDENTIFICAR</span>
+        <span><b>Diario</b> SIN IDENTIFICAR (MISC1)</span>
+        <span><b>Ejemplo</b> 02/10/2026 · ref. 20400501388 · Crédito inmediato Cámara de Compensación · 414.562,89 Bs</span>
+      </div>
+    </header>
+
+    <section id="camino">
+      <h2><span class="n">1</span>El camino</h2>
+      <p>Un depósito puede llegar a identificarse antes o después de conciliar el banco. Eso decide el camino:</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Situación</th><th>Camino</th><th>Pasa por 1.1.03.001</th></tr></thead>
+          <tbody>
+            <tr><td>Se sabe quién pagó al conciliar el banco</td><td><b>Camino corto:</b> conciliar la línea del extracto con el cobro del cliente</td><td>No</td></tr>
+            <tr><td>No se sabe quién pagó</td><td><b>Fase 1:</b> mandar el depósito a saldos por identificar</td><td>Sí, entra</td></tr>
+            <tr><td>Se identifica después</td><td><b>Fase 2:</b> asiento de identificación en el diario SIN IDENTIFICAR<br><b>Fase 3:</b> conciliar la cuenta y aplicar el cobro a las facturas</td><td>Sí, sale</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Los tres asientos del camino largo, con el monto del ejemplo:</p>
+      <div class="ledger" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="entry">
+          <div class="when">Fase 1 · conciliación bancaria</div>
+          <h4>Depósito sin identificar</h4>
+          <table><thead><tr><th>Cuenta</th><th class="num">Débito</th><th class="num">Crédito</th></tr></thead>
+          <tbody><tr><td>Banco Mercantil</td><td class="num">414.562,89</td><td></td></tr>
+          <tr><td>1.1.03.001 Saldos por identificar</td><td></td><td class="num">414.562,89</td></tr></tbody></table>
+          <p class="note">Sin contacto. Etiqueta: la referencia bancaria.</p>
+        </div>
+        <div class="entry">
+          <div class="when">Fase 2 · diario SIN IDENTIFICAR</div>
+          <h4>Identificación</h4>
+          <table><thead><tr><th>Cuenta</th><th class="num">Débito</th><th class="num">Crédito</th></tr></thead>
+          <tbody><tr><td>1.1.03.001 Saldos por identificar</td><td class="num">414.562,89</td><td></td></tr>
+          <tr><td>1.1.09.001 CxC (cliente)</td><td></td><td class="num">414.562,89</td></tr></tbody></table>
+          <p class="note">Con el contacto del cliente. Misma referencia.</p>
+        </div>
+        <div class="entry">
+          <div class="when">Fase 3 · conciliaciones</div>
+          <h4>Cierre</h4>
+          <p class="note" style="margin-top:0">a) En 1.1.03.001: el débito de la fase 2 se concilia con el crédito de la fase 1. La referencia queda en cero.</p>
+          <p class="note">b) En la CxC: el crédito del cliente se aplica a sus facturas («Agregar»).</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="config">
+      <h2><span class="n">2</span>Configuración (consultor)</h2>
+      <figure>
+        <img src="img/50_cuenta_saldos_por_identificar.webp" alt="Cuenta 1.1.03.001 SALDOS POR IDENTIFICAR" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Cuenta <b>1.1.03.001 SALDOS POR IDENTIFICAR</b>.</li><li>Tipo: Activos corrientes.</li><li><b>Permitir conciliación</b> activado. Es obligatorio, porque cada salida se concilia con su entrada.</li></ol></figcaption>
+      </figure>
+      <figure>
+        <img src="img/51_diario_sin_identificar.webp" alt="Diario SIN IDENTIFICAR" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Diario <b>SIN IDENTIFICAR</b>.</li><li>Tipo Misceláneo.</li><li>Prefijo MISC1: los asientos de identificación salen como MISC1/AAAA/MM/NNNN.</li></ol></figcaption>
+      </figure>
+      <div class="why">
+        <span class="k">Recomendaciones de configuración</span>
+        <p><b>1. Modelo de conciliación «SALDO POR IDENTIFICAR».</b> En Contabilidad › Configuración › Modelos de conciliación: tipo botón, cuenta 1.1.03.001, etiqueta igual a la referencia de la transacción. Así la fase 1 es un solo clic y no se escoge otra cuenta por error.</p>
+        <p><b>2. Tipo de cuenta.</b> 1.1.03.001 es «Activos corrientes», pero recibe depósitos (créditos): hoy tiene saldo acreedor de 87.325.309,72 Bs. Contabilidad debe decidir si se reclasifica como pasivo corriente.</p>
+      </div>
+    </section>
+
+    <section id="corto">
+      <h2><span class="n">3</span>Camino corto: el depósito ya está identificado (usuario)</h2>
+      <p>Ejemplo real: el crédito del 02/10 ref. 20400501388 es de <b>EUROBUILDING INTERNACIONAL, C.A.</b> Aribel Beltran ya registró su cobro, <b>PMERC1/2026/00429</b>, y lo aplicó a la cuenta del cliente. La línea del extracto sigue <b>sin conciliar</b>: es el último paso.</p>
+      <ol class="steps">
+        <li><div><span class="path">Contabilidad › Tablero › BANCO MERCANTIL 0312 › Conciliación</span>, vista de tarjetas. Busca la transacción <b>20400501388</b>.</div></li>
+        <li><div>Pulsa <b>Definir contacto</b> y elige <b>EUROBUILDING INTERNACIONAL, C.A.</b></div></li>
+        <li><div>Odoo muestra los cobros pendientes de ese cliente. Elige <b>PMERC1/2026/00429</b> (414.562,89 Bs) y pulsa <b>Validar</b>.</div></li>
+      </ol>
+      <figure>
+        <img src="img/52_extracto_linea_ejemplo.webp" alt="Línea del extracto 20400501388 sin conciliar" width="1600" height="1000">
+        <figcaption><ol class="marks"><li><b>Definir contacto</b>: camino corto.</li><li><b>Establecer cuenta</b>: para mandarla a saldos por identificar (fase 1).</li></ol>Línea del 02-oct, ref. 20400501388, 414.562,89 Bs, todavía sin conciliar.</figcaption>
+      </figure>
+      <figure>
+        <img src="img/57_definir_contacto.webp" alt="Buscar contacto EUROBUILDING" width="1600" height="1000">
+        <figcaption>«Definir contacto» abre el buscador: <b>EUROBUILDING INTERNACIONAL, C.A.</b></figcaption>
+      </figure>
+      <figure>
+        <img src="img/56_cobro_eurobuilding.webp" alt="Cobro PMERC1/2026/00429 de EUROBUILDING" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Cliente EUROBUILDING INTERNACIONAL, C.A.</li><li>Importe 414.562,89 Bs.</li><li>Fecha 2 oct.</li><li>Memo y referencia bancaria 20400501388.</li><li>Diario BANCO MERCANTIL 0312.</li></ol>Estado «En proceso»: pasa a «Pagado» cuando se concilia con la línea del extracto.</figcaption>
+      </figure>
+    </section>
+
+    <section id="fase1">
+      <h2><span class="n">4</span>Fase 1: mandar el depósito a saldos por identificar (usuario)</h2>
+      <ol class="steps">
+        <li><div>En la conciliación del banco, busca la transacción por su referencia.</div></li>
+        <li><div>Pulsa <b>Establecer cuenta</b> y elige <b>1.1.03.001 SALDOS POR IDENTIFICAR</b>. Si existe el botón «SALDO POR IDENTIFICAR» (recomendación 1), úsalo.</div></li>
+        <li><div>Deja la <b>referencia bancaria</b> como etiqueta y <b>no pongas contacto</b>. Pulsa <b>Validar</b>.</div></li>
+      </ol>
+      <figure>
+        <img src="img/53_establecer_cuenta.webp" alt="Buscador de cuenta con SALDOS POR IDENTIFICAR" width="1600" height="1000">
+        <figcaption>«Establecer cuenta» › <b>1.1.03.001 SALDOS POR IDENTIFICAR</b>.</figcaption>
+      </figure>
+    </section>
+
+    <section id="fase2">
+      <h2><span class="n">5</span>Fase 2: registrar la identificación (usuario)</h2>
+      <p>Cuando se sabe de quién es el depósito:</p>
+      <ol class="steps">
+        <li><div><span class="path">Contabilidad › Contabilidad › Asientos contables › Nuevo</span>.</div></li>
+        <li><div><b>Diario:</b> SIN IDENTIFICAR. <b>Fecha:</b> la de la identificación. <b>Referencia:</b> la referencia bancaria del depósito.</div></li>
+        <li><div>Línea 1: cuenta <b>1.1.03.001</b>, <b>débito</b> por el monto del depósito, sin contacto, etiqueta = referencia bancaria.</div></li>
+        <li><div>Línea 2: cuenta <b>1.1.09.001 Cuentas por cobrar</b>, <b>crédito</b> por el mismo monto, <b>contacto = cliente</b>, etiqueta «Saldo identificado &lt;referencia&gt;».</div></li>
+        <li><div>Pulsa <b>Publicar</b>.</div></li>
+      </ol>
+      <figure>
+        <img src="img/55_asiento_identificacion_misc1.webp" alt="Asiento MISC1/2026/10/0001" width="1600" height="1000">
+        <figcaption>
+          <p><span class="tag">MISC1/2026/10/0001 (INVERSIONES SOJA, ref. 20418369711): estructura correcta, pero con un error (ver sección 8)</span></p>
+          <ol class="marks"><li>Cuentas: 1.1.09.001 y 1.1.03.001.</li><li>Contacto en la línea de la CxC.</li><li>Débito a 1.1.03.001.</li><li>Crédito a la CxC.</li></ol>
+        </figcaption>
+      </figure>
+      <div class="find">
+        <div class="h"><span class="pill warn">Ojo</span><strong>El monto debe ser el mismo del depósito</strong></div>
+        <p>Si el cliente pagó más o menos de lo que se identifica, se identifica el monto del depósito completo. La diferencia queda en la cuenta del cliente como saldo a favor, o se cierra contra diferencial cambiario si es por tasa.</p>
+      </div>
+    </section>
+
+    <section id="fase3">
+      <h2><span class="n">6</span>Fase 3: conciliar y aplicar (usuario)</h2>
+      <h3>6.1 Sacar la referencia de saldos por identificar</h3>
+      <ol class="steps">
+        <li><div><span class="path">Contabilidad › Contabilidad › Apuntes contables</span>: busca <b>Cuenta 1.1.03.001</b> y la <b>referencia bancaria</b>.</div></li>
+        <li><div>Marca las dos líneas: el crédito del depósito (fase 1) y el débito de la identificación (fase 2).</div></li>
+        <li><div><b>Acciones › Conciliar</b>. Las dos quedan conciliadas y la referencia sale de los pendientes.</div></li>
+      </ol>
+      <h3>6.2 Aplicar el cobro a las facturas del cliente</h3>
+      <ol class="steps">
+        <li><div>Abre la factura del cliente. Abajo aparece el recuadro <b>«Outstanding credits» (créditos pendientes)</b> con el saldo identificado.</div></li>
+        <li><div>Pulsa <b>Agregar</b> en esa línea. Si el saldo cubre varias facturas, repite en cada una.</div></li>
+      </ol>
+      <figure>
+        <img src="img/58_factura_creditos_pendientes.webp" alt="Factura con créditos pendientes" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Recuadro «Outstanding credits» de la factura E001-00018944 (INVERSIONES SOJA).</li><li><b>Agregar</b>: aplica ese crédito a la factura.</li></ol>Si la factura es en $ y el depósito en Bs, Odoo convierte a la tasa de la fecha del cobro; los céntimos de diferencia se cierran contra diferencial cambiario.</figcaption>
+      </figure>
+    </section>
+
+    <section id="control">
+      <h2><span class="n">7</span>Control de pendientes (consultor)</h2>
+      <p>Los saldos por identificar pendientes son los apuntes <b>no conciliados</b> de la cuenta 1.1.03.001. Se revisan en <span class="path">Contabilidad › Contabilidad › Apuntes contables</span>, filtrando por la cuenta. Conviene revisarlos cada semana.</p>
+      <figure>
+        <img src="img/54_apuntes_saldos_por_identificar.webp" alt="Apuntes de la cuenta 1.1.03.001" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Etiqueta: referencia bancaria de cada depósito.</li><li>Crédito: depósitos pendientes de identificar.</li><li>Débito: identificaciones.</li></ol></figcaption>
+      </figure>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Origen de los pendientes (03/11/2026)</th><th class="num">Apuntes</th><th class="num">Saldo Bs</th></tr></thead>
+          <tbody>
+            <tr><td>Apertura 30/09: SSID de Profit por banco</td><td class="num">11</td><td class="num">−79.913.535,93</td></tr>
+            <tr><td>Depósitos de octubre, Banco Mercantil 0312</td><td class="num">25</td><td class="num">−7.679.595,78</td></tr>
+            <tr><td>Depósitos de octubre, Banesco 7128</td><td class="num">2</td><td class="num">−109.132,20</td></tr>
+            <tr><td>Identificación sin depósito (MISC1/2026/10/0001)</td><td class="num">1</td><td class="num">376.954,19</td></tr>
+            <tr><td><b>Total</b></td><td class="num"><b>39</b></td><td class="num"><b>−87.325.309,72</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Los SSID de la apertura son saldos agregados por banco que vienen de Profit, sin detalle por depósito. Cuando se identifica uno, la fase 2 es igual y en la fase 3 se concilia <b>parcialmente</b> contra la línea SSID de ese banco.</p>
+    </section>
+
+    <section id="hallazgos">
+      <h2><span class="n">8</span>Hallazgos al 03/11/2026</h2>
+      <div class="find">
+        <div class="h"><span class="pill bad">Corregir</span><strong>MISC1/2026/10/0001 identifica un depósito que nunca entró a la cuenta</strong></div>
+        <p>Identifica 376.954,19 Bs de INVERSIONES SOJA (ref. 20418369711), pero la línea de esa referencia en el extracto del Mercantil (05/10, <b>421.785,00 Bs</b>) sigue sin conciliar: nunca pasó por 1.1.03.001. Por eso la cuenta tiene un débito abierto sin contrapartida, y los montos difieren en 44.830,81 Bs. Hay que conciliar esa línea contra 1.1.03.001 (fase 1) y luego hacer la fase 3. La diferencia queda pendiente de identificar o se ajusta la identificación.</p>
+      </div>
+      <div class="find">
+        <div class="h"><span class="pill warn">Eliminar</span><strong>Borrador sin número en el diario SIN IDENTIFICAR</strong></div>
+        <p>Asiento en borrador del 21/10 (Johana Matute): Banco Mercantil / 1.1.03.001 por 5.686,69 Bs. Duplica la conciliación de la línea MERC1/2026/01548 (ref. 20467200012), que ya está en la cuenta. Se puede eliminar.</p>
+      </div>
+      <div class="find">
+        <div class="h"><span class="pill warn">Pendiente</span><strong>El ejemplo 20400501388 falta por conciliar</strong></div>
+        <p>El cobro PMERC1/2026/00429 de EUROBUILDING (414.562,89 Bs) ya está aplicado al cliente, pero la línea del extracto no está conciliada con él. Se resuelve con el camino corto (sección 3).</p>
+      </div>
+    </section>
+
+    <section id="errores">
+      <h2><span class="n">9</span>Errores comunes</h2>
+      <div class="errs">
+        <div class="err"><div>❌ Registrar la identificación (fase 2) de un depósito que nunca se mandó a 1.1.03.001.</div><div>✅ Primero la fase 1 en la conciliación bancaria; si ya se sabe el cliente, el camino corto.</div></div>
+        <div class="err"><div>❌ Poner contacto en la línea de 1.1.03.001.</div><div>✅ Sin contacto en 1.1.03.001; el contacto va en la CxC de la fase 2.</div></div>
+        <div class="err"><div>❌ Etiqueta vacía o distinta a la referencia bancaria.</div><div>✅ Siempre la referencia bancaria: es lo que permite encontrar y conciliar las dos líneas.</div></div>
+        <div class="err"><div>❌ Identificar un monto distinto al del depósito.</div><div>✅ Identificar el monto completo; la diferencia va al cliente o a diferencial.</div></div>
+        <div class="err"><div>❌ Dejar la fase 3 sin hacer.</div><div>✅ Conciliar las dos líneas de 1.1.03.001 y aplicar el crédito a las facturas el mismo día.</div></div>
+        <div class="err"><div>❌ Usar 1.1.03.001 cuando el cliente ya se conoce.</div><div>✅ Camino corto: «Definir contacto» y conciliar con el cobro.</div></div>
+      </div>
+    </section>
+
+    <footer>NIKKOSOFT Consultores C.A. · www.nikkosoft.net · Capturas y datos de alimentos-monteverde.odoo.com del 03/11/2026. No se modificó ningún registro.</footer>
+  </main>
+</div>
+</body></html>
