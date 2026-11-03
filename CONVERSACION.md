@@ -134,6 +134,12 @@ Pedido: camino y forma de registrar los depósitos sin identificar y sacarlos de
 - Hallazgos: MISC1/2026/10/0001 (SOJA, 376.954,19 Bs, ref. 20418369711) identifica un depósito que nunca entró a 1.1.03.001 (su línea de 421.785,00 Bs sigue sin conciliar); borrador sobrante en SIN IDENTIFICAR (5.686,69 Bs, duplica MERC1/2026/01548).
 - Recomendaciones: modelo de conciliación «SALDO POR IDENTIFICAR»; revisar el tipo de la cuenta.
 - Entrega: `manuales/saldos-por-identificar/` (HTML + PDF de 15 páginas con capturas). No se modificó nada (abrir la factura E001-00018944 solo cambió su fecha de modificación).
+- **v2 (pedido: «falta un paso, cuando se registra el pago real…»):** la fase 2 queda en dos pasos con dos responsables:
+  - **2.1 Cobranzas registra el cobro real** en el diario del **banco** (fecha del depósito, tasa, referencia). Queda «En proceso»: Dr transitoria de cobros del banco (Mercantil 1.1.04.004.2, Banesco 1.1.04.001.2) / Cr CxC, aplicado a las facturas. Ejemplo: PMERC1/2026/00429 (captura 59).
+  - **2.2 Contabilidad reclasifica** en SIN IDENTIFICAR: Dr 1.1.03.001 (sin contacto) / Cr **transitoria de cobros** del banco (con el contacto del cliente), ya no contra la CxC.
+  - **Fase 3:** dos conciliaciones: 1.1.03.001 (fase 1 con 2.2) y la transitoria de cobros (2.1 con 2.2); el cobro pasa a «Pagado».
+  - Razón: las comisiones (`nks_amv_comisiones`) solo cuentan diarios de banco/caja y APERTURA (`nks_comision_diario_cobro_ids` = [432]). Un crédito hecho en SIN IDENTIFICAR contra la CxC no comisiona ni sale en la relación de pagos; queda solo como excepción (5.3).
+  - PDF v2 de 18 páginas.
 
 ## Cambios hechos en producción por Claude
 

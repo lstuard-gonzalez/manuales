@@ -169,7 +169,7 @@ footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px;
     <header class="cover col">
       <div class="eyebrow">Alimentos MonteVerde C.A. · Odoo 19 · Tesorería</div>
       <h1>Saldos por identificar: registrar, identificar y reclasificar</h1>
-      <p class="lede">El camino completo de un depósito que llega al banco sin que se sepa de quién es: dónde se registra, cómo se saca de la cuenta de saldos por identificar cuando se identifica y cómo se aplica al cliente. Manual para el consultor y el usuario, con capturas de producción del 03/11/2026.</p>
+      <p class="lede">El camino completo de un depósito que llega al banco sin que se sepa de quién es: dónde se registra, quién registra el cobro real cuando se identifica, cómo se saca de la cuenta de saldos por identificar y cómo se cierra. Manual para el consultor y el usuario, con capturas de producción del 03/11/2026.</p>
       <div class="meta">
         <span><b>Cuenta</b> 1.1.03.001 SALDOS POR IDENTIFICAR</span>
         <span><b>Diario</b> SIN IDENTIFICAR (MISC1)</span>
@@ -186,11 +186,11 @@ footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px;
           <tbody>
             <tr><td>Se sabe quién pagó al conciliar el banco</td><td><b>Camino corto:</b> conciliar la línea del extracto con el cobro del cliente</td><td>No</td></tr>
             <tr><td>No se sabe quién pagó</td><td><b>Fase 1:</b> mandar el depósito a saldos por identificar</td><td>Sí, entra</td></tr>
-            <tr><td>Se identifica después</td><td><b>Fase 2:</b> asiento de identificación en el diario SIN IDENTIFICAR<br><b>Fase 3:</b> conciliar la cuenta y aplicar el cobro a las facturas</td><td>Sí, sale</td></tr>
+            <tr><td>Se identifica después</td><td><b>Fase 2.1 (cobranzas):</b> registrar el cobro real al cliente en el diario del banco<br><b>Fase 2.2 (contabilidad):</b> reclasificar de 1.1.03.001 a la transitoria de cobros del banco (diario SIN IDENTIFICAR)<br><b>Fase 3:</b> conciliar 1.1.03.001 y la transitoria de cobros</td><td>Sí, sale</td></tr>
           </tbody>
         </table>
       </div>
-      <p>Los tres asientos del camino largo, con el monto del ejemplo:</p>
+      <p>Los asientos del camino largo, con el monto del ejemplo:</p>
       <div class="ledger" style="grid-template-columns:repeat(3,minmax(0,1fr))">
         <div class="entry">
           <div class="when">Fase 1 · conciliación bancaria</div>
@@ -201,18 +201,26 @@ footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px;
           <p class="note">Sin contacto. Etiqueta: la referencia bancaria.</p>
         </div>
         <div class="entry">
-          <div class="when">Fase 2 · diario SIN IDENTIFICAR</div>
-          <h4>Identificación</h4>
+          <div class="when">Fase 2.1 · cobranzas · diario del banco</div>
+          <h4>Cobro real al cliente</h4>
+          <table><thead><tr><th>Cuenta</th><th class="num">Débito</th><th class="num">Crédito</th></tr></thead>
+          <tbody><tr><td>1.1.04.004.2 Mercantil transitoria (cobros)</td><td class="num">414.562,89</td><td></td></tr>
+          <tr><td>1.1.09.001 CxC (cliente)</td><td></td><td class="num">414.562,89</td></tr></tbody></table>
+          <p class="note">Se aplica a las facturas del cliente. Queda «En proceso».</p>
+        </div>
+        <div class="entry">
+          <div class="when">Fase 2.2 · contabilidad · diario SIN IDENTIFICAR</div>
+          <h4>Reclasificación</h4>
           <table><thead><tr><th>Cuenta</th><th class="num">Débito</th><th class="num">Crédito</th></tr></thead>
           <tbody><tr><td>1.1.03.001 Saldos por identificar</td><td class="num">414.562,89</td><td></td></tr>
-          <tr><td>1.1.09.001 CxC (cliente)</td><td></td><td class="num">414.562,89</td></tr></tbody></table>
-          <p class="note">Con el contacto del cliente. Misma referencia.</p>
+          <tr><td>1.1.04.004.2 Mercantil transitoria (cobros)</td><td></td><td class="num">414.562,89</td></tr></tbody></table>
+          <p class="note">Contacto del cliente en la línea de la transitoria. Misma referencia.</p>
         </div>
         <div class="entry">
           <div class="when">Fase 3 · conciliaciones</div>
           <h4>Cierre</h4>
-          <p class="note" style="margin-top:0">a) En 1.1.03.001: el débito de la fase 2 se concilia con el crédito de la fase 1. La referencia queda en cero.</p>
-          <p class="note">b) En la CxC: el crédito del cliente se aplica a sus facturas («Agregar»).</p>
+          <p class="note" style="margin-top:0">a) 1.1.03.001: el débito de la fase 2.2 contra el crédito de la fase 1. La referencia sale de los pendientes.</p>
+          <p class="note">b) Transitoria de cobros: el crédito de la fase 2.2 contra el débito del cobro. El cobro pasa a «Pagado».</p>
         </div>
       </div>
     </section>
@@ -230,7 +238,8 @@ footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px;
       <div class="why">
         <span class="k">Recomendaciones de configuración</span>
         <p><b>1. Modelo de conciliación «SALDO POR IDENTIFICAR».</b> En Contabilidad › Configuración › Modelos de conciliación: tipo botón, cuenta 1.1.03.001, etiqueta igual a la referencia de la transacción. Así la fase 1 es un solo clic y no se escoge otra cuenta por error.</p>
-        <p><b>2. Tipo de cuenta.</b> 1.1.03.001 es «Activos corrientes», pero recibe depósitos (créditos): hoy tiene saldo acreedor de 87.325.309,72 Bs. Contabilidad debe decidir si se reclasifica como pasivo corriente.</p>
+        <p><b>2. El cobro real va siempre en el diario del banco.</b> El módulo de comisiones solo cuenta como cobro los pagos de diarios de banco o caja, más los diarios declarados en «Otros diarios que cuentan como cobro» (hoy solo APERTURA). Un asiento del diario SIN IDENTIFICAR aplicado directo a la factura <b>no comisiona</b> y no sale en la relación de pagos.</p>
+        <p><b>3. Tipo de cuenta.</b> 1.1.03.001 es «Activos corrientes», pero recibe depósitos (créditos): hoy tiene saldo acreedor de 87.325.309,72 Bs. Contabilidad debe decidir si se reclasifica como pasivo corriente.</p>
       </div>
     </section>
 
@@ -270,44 +279,73 @@ footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px;
     </section>
 
     <section id="fase2">
-      <h2><span class="n">5</span>Fase 2: registrar la identificación (usuario)</h2>
-      <p>Cuando se sabe de quién es el depósito:</p>
+      <h2><span class="n">5</span>Fase 2: identificar el depósito</h2>
+      <p>La fase 2 tiene dos pasos y dos responsables. El orden importa: primero el cobro real, después la reclasificación.</p>
+
+      <h3>5.1 Cobranzas registra el cobro real</h3>
+      <p>Lo hace quien registra los cobros (en AMV, cobranzas), igual que cualquier cobro del banco:</p>
+      <ol class="steps">
+        <li><div>Desde la factura del cliente, <b>Pagar</b> (o <span class="path">Contabilidad › Clientes › Pagos › Nuevo</span>).</div></li>
+        <li><div><b>Diario:</b> el banco donde entró el depósito (en el ejemplo, BANCO MERCANTIL 0312). <b>Fecha:</b> la del depósito, no la de la identificación.</div></li>
+        <li><div><b>Importe</b> y <b>tasa</b> del depósito. <b>Memo y referencia bancaria:</b> la referencia del depósito (20400501388).</div></li>
+        <li><div>Confirmar. El cobro queda <b>«En proceso»</b>: aplicado a las facturas, con su débito en la transitoria de cobros del banco esperando contrapartida.</div></li>
+        <li><div>Avisar a contabilidad: cliente, referencia, monto y número del cobro.</div></li>
+      </ol>
+      <figure>
+        <img src="img/56_cobro_eurobuilding.webp" alt="Cobro PMERC1/2026/00429 de EUROBUILDING" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Cliente.</li><li>Importe del depósito.</li><li>Fecha del depósito.</li><li>Memo con la referencia bancaria.</li><li>Diario del banco.</li></ol>Cobro real PMERC1/2026/00429 (EUROBUILDING) registrado por Aribel Beltran, «En proceso».</figcaption>
+      </figure>
+      <figure>
+        <img src="img/59_apuntes_cobro_real.webp" alt="Apuntes del cobro PMERC1/2026/00429" width="1600" height="1000">
+        <figcaption><ol class="marks"><li>Cuenta <b>1.1.04.004.2 BANCO MERCANTIL TRANSITORIA (cobros)</b>.</li><li>Contacto EUROBUILDING.</li><li>Débito 414.562,89 Bs: esta es la línea que la fase 2.2 debe cerrar.</li></ol></figcaption>
+      </figure>
+
+      <h3>5.2 Contabilidad reclasifica el saldo</h3>
       <ol class="steps">
         <li><div><span class="path">Contabilidad › Contabilidad › Asientos contables › Nuevo</span>.</div></li>
-        <li><div><b>Diario:</b> SIN IDENTIFICAR. <b>Fecha:</b> la de la identificación. <b>Referencia:</b> la referencia bancaria del depósito.</div></li>
+        <li><div><b>Diario:</b> SIN IDENTIFICAR. <b>Fecha:</b> la de la identificación. <b>Referencia:</b> «Identificación &lt;referencia bancaria&gt; – &lt;número del cobro&gt;».</div></li>
         <li><div>Línea 1: cuenta <b>1.1.03.001</b>, <b>débito</b> por el monto del depósito, sin contacto, etiqueta = referencia bancaria.</div></li>
-        <li><div>Línea 2: cuenta <b>1.1.09.001 Cuentas por cobrar</b>, <b>crédito</b> por el mismo monto, <b>contacto = cliente</b>, etiqueta «Saldo identificado &lt;referencia&gt;».</div></li>
-        <li><div>Pulsa <b>Publicar</b>.</div></li>
+        <li><div>Línea 2: la <b>transitoria de cobros del banco</b> del depósito (Mercantil: 1.1.04.004.2; Banesco: 1.1.04.001.2; etc.), <b>crédito</b> por el mismo monto, <b>contacto = cliente</b>, etiqueta = referencia bancaria.</div></li>
+        <li><div>Pulsa <b>Publicar</b> y sigue con la fase 3.</div></li>
       </ol>
+      <div class="why">
+        <span class="k">Por qué contra la transitoria y no contra la cuenta por cobrar</span>
+        <p>El cobro real ya acreditó la cuenta por cobrar del cliente. Si la reclasificación también la acredita, el cliente queda con un crédito duplicado. La transitoria de cobros es el puente: el cobro la debita y la reclasificación la acredita.</p>
+      </div>
+
+      <h3>5.3 Excepción: identificación sin cobro real</h3>
+      <p>Solo si no se va a registrar el cobro en el banco (por ejemplo, un depósito que no es de un cliente), la línea 2 va a la cuenta que corresponda. Si es de un cliente, a <b>1.1.09.001</b> con su contacto, y el crédito se aplica a las facturas con «Agregar». Así <b>no comisiona</b> y no sale en la relación de pagos.</p>
       <figure>
         <img src="img/55_asiento_identificacion_misc1.webp" alt="Asiento MISC1/2026/10/0001" width="1600" height="1000">
         <figcaption>
-          <p><span class="tag">MISC1/2026/10/0001 (INVERSIONES SOJA, ref. 20418369711): estructura correcta, pero con un error (ver sección 8)</span></p>
+          <p><span class="tag">MISC1/2026/10/0001 (INVERSIONES SOJA, ref. 20418369711): identificación contra la cuenta por cobrar, sin cobro real; además con un error (ver sección 8)</span></p>
           <ol class="marks"><li>Cuentas: 1.1.09.001 y 1.1.03.001.</li><li>Contacto en la línea de la CxC.</li><li>Débito a 1.1.03.001.</li><li>Crédito a la CxC.</li></ol>
         </figcaption>
       </figure>
       <div class="find">
         <div class="h"><span class="pill warn">Ojo</span><strong>El monto debe ser el mismo del depósito</strong></div>
-        <p>Si el cliente pagó más o menos de lo que se identifica, se identifica el monto del depósito completo. La diferencia queda en la cuenta del cliente como saldo a favor, o se cierra contra diferencial cambiario si es por tasa.</p>
+        <p>El cobro real y la reclasificación van por el monto completo del depósito. Si el cliente pagó más de lo que debe, el excedente queda en su cuenta como saldo a favor. Si la diferencia es por tasa, se cierra contra diferencial cambiario.</p>
       </div>
     </section>
 
     <section id="fase3">
-      <h2><span class="n">6</span>Fase 3: conciliar y aplicar (usuario)</h2>
+      <h2><span class="n">6</span>Fase 3: conciliar (contabilidad)</h2>
       <h3>6.1 Sacar la referencia de saldos por identificar</h3>
       <ol class="steps">
         <li><div><span class="path">Contabilidad › Contabilidad › Apuntes contables</span>: busca <b>Cuenta 1.1.03.001</b> y la <b>referencia bancaria</b>.</div></li>
-        <li><div>Marca las dos líneas: el crédito del depósito (fase 1) y el débito de la identificación (fase 2).</div></li>
-        <li><div><b>Acciones › Conciliar</b>. Las dos quedan conciliadas y la referencia sale de los pendientes.</div></li>
+        <li><div>Marca las dos líneas: el crédito del depósito (fase 1) y el débito de la reclasificación (fase 2.2).</div></li>
+        <li><div><b>Acciones › Conciliar</b>. La referencia sale de los pendientes.</div></li>
       </ol>
-      <h3>6.2 Aplicar el cobro a las facturas del cliente</h3>
+      <h3>6.2 Cerrar el cobro real en la transitoria de cobros</h3>
       <ol class="steps">
-        <li><div>Abre la factura del cliente. Abajo aparece el recuadro <b>«Outstanding credits» (créditos pendientes)</b> con el saldo identificado.</div></li>
-        <li><div>Pulsa <b>Agregar</b> en esa línea. Si el saldo cubre varias facturas, repite en cada una.</div></li>
+        <li><div>En Apuntes contables, busca la <b>transitoria de cobros</b> del banco (por ejemplo 1.1.04.004.2) y el <b>contacto</b> o la referencia.</div></li>
+        <li><div>Marca el débito del cobro real (fase 2.1) y el crédito de la reclasificación (fase 2.2).</div></li>
+        <li><div><b>Acciones › Conciliar</b>. El cobro pasa de «En proceso» a <b>«Pagado»</b>.</div></li>
       </ol>
+      <p>Si en la fase 2.1 cobranzas no aplicó el cobro a las facturas, se aplica ahora: en la factura, «Outstanding credits» (créditos pendientes) › <b>Agregar</b>.</p>
       <figure>
         <img src="img/58_factura_creditos_pendientes.webp" alt="Factura con créditos pendientes" width="1600" height="1000">
-        <figcaption><ol class="marks"><li>Recuadro «Outstanding credits» de la factura E001-00018944 (INVERSIONES SOJA).</li><li><b>Agregar</b>: aplica ese crédito a la factura.</li></ol>Si la factura es en $ y el depósito en Bs, Odoo convierte a la tasa de la fecha del cobro; los céntimos de diferencia se cierran contra diferencial cambiario.</figcaption>
+        <figcaption><ol class="marks"><li>Recuadro «Outstanding credits» de la factura E001-00018944 (INVERSIONES SOJA).</li><li><b>Agregar</b>: aplica ese crédito a la factura.</li></ol>Si la factura es en $ y el cobro en Bs, Odoo convierte a la tasa de la fecha del cobro; los céntimos de diferencia se cierran contra diferencial cambiario.</figcaption>
       </figure>
     </section>
 
@@ -353,10 +391,13 @@ footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px;
       <h2><span class="n">9</span>Errores comunes</h2>
       <div class="errs">
         <div class="err"><div>❌ Registrar la identificación (fase 2) de un depósito que nunca se mandó a 1.1.03.001.</div><div>✅ Primero la fase 1 en la conciliación bancaria; si ya se sabe el cliente, el camino corto.</div></div>
+        <div class="err"><div>❌ Reclasificar contra la cuenta por cobrar cuando cobranzas ya registró el cobro real.</div><div>✅ Contra la transitoria de cobros del banco: si no, el cliente queda con el crédito duplicado.</div></div>
+        <div class="err"><div>❌ Identificar con un asiento sin registrar el cobro real.</div><div>✅ El cobro real va en el diario del banco: es lo que cuenta para comisiones y relación de pagos.</div></div>
+        <div class="err"><div>❌ Registrar el cobro real con la fecha de la identificación.</div><div>✅ Con la fecha del depósito; la reclasificación lleva la fecha de la identificación.</div></div>
         <div class="err"><div>❌ Poner contacto en la línea de 1.1.03.001.</div><div>✅ Sin contacto en 1.1.03.001; el contacto va en la CxC de la fase 2.</div></div>
         <div class="err"><div>❌ Etiqueta vacía o distinta a la referencia bancaria.</div><div>✅ Siempre la referencia bancaria: es lo que permite encontrar y conciliar las dos líneas.</div></div>
         <div class="err"><div>❌ Identificar un monto distinto al del depósito.</div><div>✅ Identificar el monto completo; la diferencia va al cliente o a diferencial.</div></div>
-        <div class="err"><div>❌ Dejar la fase 3 sin hacer.</div><div>✅ Conciliar las dos líneas de 1.1.03.001 y aplicar el crédito a las facturas el mismo día.</div></div>
+        <div class="err"><div>❌ Dejar la fase 3 sin hacer.</div><div>✅ Conciliar 1.1.03.001 y la transitoria de cobros el mismo día: el cobro debe quedar «Pagado».</div></div>
         <div class="err"><div>❌ Usar 1.1.03.001 cuando el cliente ya se conoce.</div><div>✅ Camino corto: «Definir contacto» y conciliar con el cobro.</div></div>
       </div>
     </section>
