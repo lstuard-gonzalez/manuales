@@ -107,6 +107,11 @@ Reportes de Profit «Comisiones por cobros» 01/10–15/10 de 8 vendedores contr
 - Estado al 03/11: José Oria creó los libros definitivos de la 2.ª quincena de octubre (compras 19 facturas, ventas 237, «Personalizado» 16–31/10). Sobran el primer libro de compras (15/10–31/10, 1 factura) y el libro de ventas «PRUEBA» (retiene 155 facturas del 01 al 15/10). En el libro de compras, NANTONG y FARMERS salen con RIF «VFalse».
 - Entrega: `manuales/libros-fiscales/` (instructivo HTML + PDF de 8 páginas con capturas). No se modificó ningún libro.
 
+### 12. Cobros/pagos con fecha 27/11 en vez de 27/10 (03/11)
+- 9 recibos de gasto de Barbara Bernal (GASTOS NO FISCALES, C003-00002080 a 00087 y 00093) y 8 pagos del Banesco (PBNK2/2026/00203 a 00210), todos en Bs, con fecha 27/11/2026.
+- Con autorización del usuario, Claude los pasó a borrador, les puso fecha 27/10/2026 (fecha contable y de factura), conservó la tasa que puso la usuaria, los confirmó y volvió a conciliar cada recibo con su pago. El pago del recibo C003-00002093 (PBNK2/2026/00222) ya estaba al 27/10. Verificado: 0 pagos con fecha futura.
+- Pendiente de autorización: 38 asientos EXCH del 29/11 (Aribel). 18 pares ya revertidos (neto 0) y 2 activos: EXCH/2026/11/0014 (SUPER D´CARLOS 6.601,69 Bs, PBCRE/2026/00003 – F001-00004106) y EXCH/2026/11/0018 (NUEVO SIGLO 158,89 Bs, PPRVC1/2026/00037 – F001-00004357). Nacieron cuando esos cobros tenían fecha 29/11.
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
@@ -115,6 +120,7 @@ Reportes de Profit «Comisiones por cobros» 01/10–15/10 de 8 vendedores contr
 | 26/10 | Factura C003-00001942 y asiento STJ/2026/10/0001 | Solo cambió la fecha de modificación al abrirlos (recálculo de la localización); sin cambios de montos |
 | 27/10 | LC/2026/0120 | Línea a US$ 62.078,71 y cuenta 5.1.01.007; reparto manual; **validado** |
 | 02/11 | GRUPO FERREIRA 001 / C003-00001955 / retención IVA | Proveedor al 100%, Referencia 00000044, comprobante 443 cancelado y nuevo comprobante 20261000000013 al 100% (id 467) |
+| 03/11 | 9 recibos C003-00002080..87 y 00093, pagos PBNK2/2026/00203..00210 | Fecha 27/11 → 27/10, misma tasa, reconciliados |
 | 29/10 | OPVAR/2026/10/0176 | Ajuste de redondeo de US$ 0,015 (12,74 Bs) conciliado con FACT 1891 de MESAMAR |
 
 Todo lo demás fue de solo lectura.
