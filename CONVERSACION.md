@@ -1,22 +1,24 @@
-# Conversación 2026-10-26 · AMV · Costos en destino e importaciones
+# Conversación 2026-10-26 · AMV · Costos en destino, importaciones y soporte contable
 
-Resumen para retomar esta conversación. Fechas: 26 y 27/10/2026.
+Resumen para retomar esta conversación. Fechas: del 26/10 al 03/11/2026.
 
 ## Contexto
 
 | Dato | Valor |
 |---|---|
-| Cliente | Alimentos MonteVerde C.A. (AMV) |
+| Cliente | Alimentos MonteVerde C.A. (AMV), RIF J-31220183-5 |
 | Instancia | https://alimentos-monteverde.odoo.com (producción, Odoo 19 Enterprise) |
 | Base de datos | `alimentos-monteverde-main-24467214` |
 | Usuario usado | `admin`. **La clave no se guarda aquí**: pedírsela al usuario. Se escribió en el chat el 26/10, así que conviene cambiarla. |
 | Repo del cliente | `Nikkosoft/odoo-alimentos-monteverde`, rama `claude/gallant-sagan-qn3idn` (los manuales también están en `docs/manuales/`) |
 | Localización | `nks_localizacion` (submódulo, rama 19.0). No hubo acceso a ese repo en la sesión. |
-| Módulos clave | `stock_landed_costs` 19.0.1.1, `mrp_landed_costs`, `account_dual_currency` 1.12.20, `nks_importaciones` 1.5.1, `nks_amv_ventas` 1.18.1 |
+| Módulos clave | `stock_landed_costs` 19.0.1.1, `mrp_landed_costs`, `account_dual_currency` 1.12.20, `nks_importaciones` 1.5.1, `nks_amv_ventas` 1.18.4, `nks_amv_comisiones` 19.0.1.0.0 |
 | Sesión original | https://claude.ai/code/session_012G7rDzCGgXdqyg1cPT8wfi |
 | Repo de manuales | https://github.com/lstuard-gonzalez/manuales (privado), rama `2026-10-26-amv-costos-destino-importaciones` |
 
-Configuración de valuación en AMV: perpetua (al facturar), AVCO, cuenta de inventario `1.1.13.001 INVENTARIO VENTA`, diario `STJ · Valuación de inventario` (id 8). Moneda de la compañía VES; referencia USD.
+- **Valuación:** perpetua (al facturar), AVCO, cuenta de inventario `1.1.13.001 INVENTARIO VENTA`, diario `STJ · Valuación de inventario` (id 8). La recepción no genera asiento; lo genera la factura del proveedor.
+- **Monedas:** compañía en VES; referencia en USD.
+- **Compañías y sucursales:** una sola compañía. Las sucursales (Valencia, Caracas, Lecherías, CEALCO) son almacenes (`nks_sucursal_id`).
 
 ## Pedidos y entregas, en orden
 
@@ -57,11 +59,11 @@ Mensaje y audios del cliente: el filet se facturó a US$ 11,25/kg pero el costeo
 ### 5. Repositorio de manuales (27/10)
 - Pedido: guardar todos los manuales en un repo git llamado `manuales`, en la cuenta personal del usuario (`lstuard-gonzalez`, no en Nikkosoft), con un `.md` de la conversación para retomarla, y **una rama por conversación**.
 - La integración de Claude no puede crear repos (403 en Nikkosoft y en la cuenta personal). El usuario creó `lstuard-gonzalez/manuales` vacío e instaló la app de Claude en su cuenta; después se hizo el push.
-- Estructura subida:
+- Estructura:
   - `main`: solo `README.md` con la convención (`AAAA-MM-DD-cliente-tema`) y la tabla de conversaciones.
-  - `2026-10-26-amv-costos-destino-importaciones`: este archivo, `manuales/` (HTML + PDF de los dos manuales), `fuentes/` (Excel del salmón) y `tools/`.
+  - `2026-10-26-amv-costos-destino-importaciones`: este archivo, `manuales/` (cada entrega en su carpeta), `fuentes/` (archivos del cliente) y `tools/`.
 - Convención para las próximas conversaciones: crear una rama nueva con el mismo formato, con su `CONVERSACION.md`, y agregar su fila al índice de `main`.
-- Los manuales siguen también en el repo del cliente (`Nikkosoft/odoo-alimentos-monteverde`, `docs/manuales/`).
+- Los dos primeros manuales siguen también en el repo del cliente (`Nikkosoft/odoo-alimentos-monteverde`, `docs/manuales/`).
 
 ### 6. Pago agrupado a MESAMAR (29/10)
 Video de Raquel: al marcar 4 facturas de MESAMAR la lista sumaba US$ 12.829,89, pero el asistente «Pagar» proponía US$ 12.800,095 (el total menos los US$ 29,80 de C003-00002025; la causa no se pudo reproducir porque las facturas ya estaban pagadas). Preguntaba si registrar un solo pago y cruzarlo factura por factura.
@@ -69,12 +71,12 @@ Video de Raquel: al marcar 4 facturas de MESAMAR la lista sumaba US$ 12.829,89, 
 - Raquel ya lo había hecho: pago **PZELBI/2026/00135** (US$ 12.829,88, diario CXC JORGE ZELLE-BINANCE (USD), fecha 28/10, tasa 888,1183) cruzado con C003-00002025, C003-00001955, C003-00001933 y FACT 1891.
 - Quedó un residuo de **US$ 0,015 (12,74 Bs)** en FACT 1891, porque C003-00001955 tiene tres decimales (3.413,985) y el pago solo dos.
 - Con autorización del usuario, Claude registró **OPVAR/2026/10/0176** (diario OPERACIONES VARIAS, 29/10): débito `2.1.02.001` MESAMAR 12,74 Bs (US$ 0,015), crédito `8.1.01.0006 OTROS INGRESOS VARIOS`, y lo concilió con FACT 1891, que quedó saldada.
-- FACT 1854 (US$ 237,08) sigue pendiente; no estaba en el pago.
+- FACT 1854 (US$ 237,08) sigue pendiente: el usuario pidió pagarla, pero no indicó diario ni fecha.
 
 ### 7. Validación de la Relación de pagos (29/10)
 Danny reenvió «Relación de pagos (33).pdf» (149 pagos del 27/10, creados por Aribel Beltran, BANCO MERCANTIL 0312) para validar los montos contra la base de datos: creía que el reporte traía la tasa BCV en lugar de la tasa que pone la usuaria.
 
-- El reporte coincide con la base de datos en los 149 pagos (tasa = `tax_today`, Importe Bs = `amount_company_currency_signed` = asiento). Versión en producción: `nks_amv_ventas` 1.18.4 (ramas `main`/`staging` del repo del cliente).
+- El reporte coincide con la base de datos en los 149 pagos (tasa = `tax_today`, Importe Bs = `amount_company_currency_signed` = asiento).
 - 10 de los 36 pagos en $ están contabilizados con otra tasa (8 a la BCV 887,302 y 2 a otra tasa). Diferencia total: 303.090,52 Bs. En los 10 casos el pago se restableció a borrador, se editó y se reconfirmó: la localización (`account_dual_currency`) recalcula el asiento sin respetar la tasa del pago.
 - Número repetido: PMERC1/2026/00253 (un pago anulado de Johana Matute y el vigente de Aribel).
 - Entrega: `manuales/validacion-relacion-pagos/` (PDF de 3 páginas para el consultor). Fuente: `fuentes/Relacion_de_pagos_33.pdf`.
@@ -85,36 +87,43 @@ El proveedor (J-50792517-0) rechazó el comprobante de retención de IVA 2026100
 
 - Causas: la ficha del proveedor tenía «% Retención de IVA» = 75, y el comprobante toma el número de factura del campo **Referencia** de la factura (00000043), no de «Número de factura del proveedor» (00000044).
 - El comprobante no se había declarado. Con autorización del usuario, Claude: puso el proveedor al 100%, cambió la Referencia de C003-00001955 a 00000044, canceló el comprobante (id 443; su asiento IVAC/2026/10/0014 quedó cancelado), confirmó la factura y confirmó la retención nueva (id 467).
-- Resultado: comprobante **20261000000013** (la localización reutilizó el mismo número), 100%, 220.273,06 Bs, factura 00000044; asiento IVAC/2026/10/0015. Saldo por pagar de la factura: 1.540.227,20 Bs.
+- Resultado: comprobante **20261000000013** (la localización reutilizó el mismo número), 100%, 220.273,06 Bs, factura 00000044; asiento IVAC/2026/10/0015. Saldo por pagar de la factura: 1.540.227,20 Bs. Se entregó un mensaje corto para el proveedor.
 
 ### 9. Pagos y cobros de Profit sin contrapartida (02/11)
 Pedido: revisar los cobros/pagos cargados desde Profit que deben tener contrapartida en Odoo (contra el saldo inicial de bancos), sin conexión a Profit.
 - 1.673 pagos de Profit (OdooBot, 01/10–29/10) en cuentas transitorias. Apertura de bancos y cajas al 30/09 = saldo de libros de Profit contra la puente `3.9.01.001`. Extractos cargados solo para los bancos en Bs (01/10–28/10).
 - 1.015 conciliados con extracto; 68 con línea libre en el extracto (25,5 MM Bs); 2 dobles (Banco del Tesoro, ref. 122554603: la línea del extracto se concilió directo contra la CxC de INVERSIONES SUSHI EXPRES GM, saldo a favor falso de −16.336.952 Bs); 486 en cuentas sin extractos (Regions, Zelle-Binance, Efectivo $, Banco de Venezuela, Caja, Mercantil Panamá, Amerant); 99 sin rastro en el extracto de octubre (25,0 MM Bs: candidatos a estar ya en el saldo de apertura).
 - Mercantil Panamá y Amerant quedarían en −US$ 181 mil y −US$ 292 mil: faltan los fondeos (de Profit solo se migraron cobros y pagos, no los movimientos de banco).
-- Entrega: `manuales/pagos-profit-contrapartida/Pagos-Profit-sin-contrapartida-AMV.xlsx`. Se propuso cómo corregir; no se aplicó nada (pendiente de autorización: Tesoro y los 68).
+- Entrega: `manuales/pagos-profit-contrapartida/Pagos-Profit-sin-contrapartida-AMV.xlsx` y los pasos para corregir. No se aplicó nada (pendiente de autorización: Tesoro y los 68).
 
 ### 10. Comisiones del 1.er corte de octubre, Odoo contra Profit (02/11)
-Reportes de Profit «Comisiones por cobros» 01/10–15/10 de 8 vendedores contra el corte confirmado de Odoo (nks_amv_comisiones).
+Reportes de Profit «Comisiones por cobros» 01/10–15/10 de 8 vendedores contra el corte confirmado de Odoo (`nks_amv_comisiones`).
 - Profit US$ 7.273,31 contra Odoo US$ 5.078,79 (−2.194,52). Por tasa −2.313,12: Profit corrió 3% fijo; Odoo paga el adelanto del 2% en el corte del 15 (grupos con escala) y completa al cierre según cumplimiento. Por base +118,40 netos.
 - Causas de base: N/DB de diferencial (Profit las comisiona aparte; Odoo aplica todo a la factura con tope), notas de crédito (Profit resta), retenciones de IVA (Profit comisiona), 6 facturas con otro vendedor en Odoo, cobros del 15/10 aplicados el 16/10 en Odoo, 8 documentos de María que Profit no trae.
 - Error de Odoo: comisiona AJPM cuyo cliente es el propio vendedor (Albert 11124, Manuel 11120, María 11121).
 - Entrega: `manuales/comisiones-1er-corte-octubre/` (PDF de 3 páginas + Excel por documento). No se modificó nada.
 
-### 11. Libros fiscales de compras y ventas (03/11)
-- «Actualizar libro» no traía nada: los períodos predefinidos («Quincena anterior», «Último mes»…) calculan las fechas en el onchange, pero `period_start`/`period_end` son de solo lectura sin `force_save` y no se guardan. Solución temporal: «Personalizado» con fechas a mano. Incidencia para Eulises: `manuales/incidencias-localizacion/libro-fiscal-periodo-sin-fechas.md`.
-- El libro es global por compañía (RIF); las sucursales son almacenes (`nks_sucursal_id`). El campo «Diarios» permite libros por sucursal, pero cada factura queda en un solo libro (`fb_id`).
+### 11. Línea de extracto de INVERSIONES SOJA (03/11)
+Captura de la conciliación bancaria de la línea del 08/10, ref. 20418507667, BANCO MERCANTIL 0312, 206.754,60 Bs.
+- El asiento MERC1/2026/00631 quedó mal tras varios intentos de Johana Matute (02/11 y 03/11): además del banco y del pago de la factura E001-00017172 (FACT 19151, US$ 203,90 = 178.357,88 Bs a la BCV del 08/10), tiene un débito de 206.754,60 Bs a la CxC del cliente (deuda falsa) y un crédito de 235.151,32 Bs a la transitoria. La línea sigue sin conciliar.
+- Lo correcto: banco 206.754,60 / CxC factura 178.357,88 / diferencia 28.396,72 Bs a `8.1.01.0004` (o a favor del cliente). Se explicaron los pasos (Restablecer, agregar la factura, la diferencia a la cuenta, Validar). No se aplicó: falta que el usuario indique si los 28.396,72 Bs van a diferencial o a favor del cliente.
+
+### 12. Libros fiscales de compras y ventas (03/11)
+- «Actualizar libro» no traía nada: los períodos predefinidos («Quincena anterior», «Último mes»…) calculan las fechas en el onchange, pero `period_start`/`period_end` son de solo lectura sin `force_save` y no se guardan. Solución temporal: «Personalizado» con fechas a mano. Incidencia para Eulises: `manuales/incidencias-localizacion/libro-fiscal-periodo-sin-fechas.md` (incluye otros 4 defectos de la localización encontrados en la conversación).
+- El libro es global por compañía (RIF). El campo «Diarios» permite libros por sucursal, pero cada factura queda en un solo libro (`fb_id`), así que los libros por sucursal reemplazan al global.
 - Estado al 03/11: José Oria creó los libros definitivos de la 2.ª quincena de octubre (compras 19 facturas, ventas 237, «Personalizado» 16–31/10). Sobran el primer libro de compras (15/10–31/10, 1 factura) y el libro de ventas «PRUEBA» (retiene 155 facturas del 01 al 15/10). En el libro de compras, NANTONG y FARMERS salen con RIF «VFalse».
 - Entrega: `manuales/libros-fiscales/` (instructivo HTML + PDF de 8 páginas con capturas). No se modificó ningún libro.
 
-### 12. Cobros/pagos con fecha 27/11 en vez de 27/10 (03/11)
+### 13. Cobros/pagos con fecha 27/11 en vez de 27/10 (03/11)
 - 9 recibos de gasto de Barbara Bernal (GASTOS NO FISCALES, C003-00002080 a 00087 y 00093) y 8 pagos del Banesco (PBNK2/2026/00203 a 00210), todos en Bs, con fecha 27/11/2026.
-- Con autorización del usuario, Claude los pasó a borrador, les puso fecha 27/10/2026 (fecha contable y de factura), conservó la tasa que puso la usuaria, los confirmó y volvió a conciliar cada recibo con su pago. El pago del recibo C003-00002093 (PBNK2/2026/00222) ya estaba al 27/10. Verificado: 0 pagos con fecha futura.
-- EXCH del 29/11 (Aribel), corregidos con autorización del usuario:
-  - EXCH/2026/11/0014 (SUPER D´CARLOS) y 0018 (NUEVO SIGLO), activos: se rehizo la conciliación del cobro con su factura; Odoo revirtió los del 29/11 y creó EXCH/2026/10/2301 (6.874,68 Bs) y 2300 (84,28 Bs) con fecha 31/10. Con la fecha correcta del cobro (29/10, BCV 888,8909) quedaba un residuo en US$ (0,3161 y 0,0949) que se cerró contra `8.2.01.0007` (OPVAR/2026/10/0178 por 272,99 Bs y 0177 por 84,28 Bs): ambas facturas quedan pagadas.
-  - Los 20 pares (original + reversión, neto 0) se pasaron al 29/10 con números nuevos EXCH/2026/10/2302 a 2341 (Odoo exige limpiar el número de noviembre para cambiar de mes). Quedan huecos en la secuencia EXCH/2026/11.
-  - Verificado: 0 asientos y 0 pagos con fecha futura; 0 borradores en EXCH.
-- Lección: rehacer por RPC una conciliación de cobro en Bs con factura en US$ usa la BCV de la fecha del cobro, no la tasa del pago; puede dejar centavos en US$ que hay que cerrar.
+- Con autorización del usuario, Claude los pasó a borrador, les puso fecha 27/10/2026 (fecha contable y de factura), conservó la tasa que puso la usuaria, los confirmó y volvió a conciliar cada recibo con su pago. El pago del recibo C003-00002093 (PBNK2/2026/00222) ya estaba al 27/10.
+
+### 14. Diferencias en cambio (EXCH) con fecha 29/11 (03/11)
+38 asientos EXCH de Aribel con fecha 29/11, de cobros que tuvieron esa fecha antes de corregirse al 29/10. Corregidos con autorización del usuario:
+- **EXCH/2026/11/0014 (SUPER D´CARLOS) y 0018 (NUEVO SIGLO), activos:** se rehizo la conciliación del cobro con su factura. Odoo revirtió los del 29/11 y creó EXCH/2026/10/2301 (6.874,68 Bs) y 2300 (84,28 Bs) con fecha 31/10. Con la fecha correcta del cobro (29/10, BCV 888,8909) quedaba un residuo en US$ (0,3161 y 0,0949) que se cerró contra `8.2.01.0007` (OPVAR/2026/10/0178 por 272,99 Bs y 0177 por 84,28 Bs). F001-00004106 y F001-00004357 quedan pagadas.
+- **Los 20 pares** (original + reversión, neto 0): pasados al 29/10 con números nuevos EXCH/2026/10/2302 a 2341. Cada reversión apunta en su referencia al número nuevo. Quedan huecos en la secuencia EXCH/2026/11.
+- **Verificado:** 0 asientos y 0 pagos con fecha futura; 0 borradores en EXCH.
+- Se entregó un resumen corto para el consultor (en el chat).
 
 ## Cambios hechos en producción por Claude
 
@@ -123,37 +132,54 @@ Reportes de Profit «Comisiones por cobros» 01/10–15/10 de 8 vendedores contr
 | 26/10 | LC/2026/0119 | Creado por error (borrador vacío) y luego **borrado** con autorización |
 | 26/10 | Factura C003-00001942 y asiento STJ/2026/10/0001 | Solo cambió la fecha de modificación al abrirlos (recálculo de la localización); sin cambios de montos |
 | 27/10 | LC/2026/0120 | Línea a US$ 62.078,71 y cuenta 5.1.01.007; reparto manual; **validado** |
-| 02/11 | GRUPO FERREIRA 001 / C003-00001955 / retención IVA | Proveedor al 100%, Referencia 00000044, comprobante 443 cancelado y nuevo comprobante 20261000000013 al 100% (id 467) |
-| 03/11 | 9 recibos C003-00002080..87 y 00093, pagos PBNK2/2026/00203..00210 | Fecha 27/11 → 27/10, misma tasa, reconciliados |
-| 03/11 | EXCH del 29/11 (40 asientos) | Pasados al 29/10 (EXCH/2026/10/2300–2341); OPVAR/2026/10/0177 y 0178 cierran centavos |
 | 29/10 | OPVAR/2026/10/0176 | Ajuste de redondeo de US$ 0,015 (12,74 Bs) conciliado con FACT 1891 de MESAMAR |
+| 02/11 | GRUPO FERREIRA 001 / C003-00001955 / retención IVA | Proveedor al 100%, Referencia 00000044, comprobante 443 cancelado y nuevo comprobante 20261000000013 al 100% (id 467) |
+| 03/11 | 9 recibos C003-00002080..87 y 00093, pagos PBNK2/2026/00203..00210 | Fecha 27/11 → 27/10, misma tasa, conciliados otra vez |
+| 03/11 | EXCH del 29/11 (40 asientos) | Pasados a octubre (EXCH/2026/10/2300–2341); OPVAR/2026/10/0177 y 0178 cierran centavos |
 
 Todo lo demás fue de solo lectura.
 
 ## Pendientes
 
+**Datos en producción (necesitan decisión o datos del usuario)**
+- **INVERSIONES SOJA:** corregir MERC1/2026/00631 cuando se decida si los 28.396,72 Bs van a diferencial o a favor del cliente.
+- **FACT 1854 de MESAMAR (US$ 237,08):** registrar el pago cuando se sepa el diario y la fecha.
+- **Banco del Tesoro (doble):** restablecer la línea ref. 122554603 y conciliarla con los cobros PTESUS/2026/00001 y 00002.
+- **68 cobros de Profit** con línea libre en el extracto: conciliar. Cargar extractos de las cuentas en $ y registrar los fondeos de Mercantil Panamá y Amerant.
+- **10 pagos con tasa equivocada** (relación de pagos del 27/10): corregir sus asientos.
+- **Libros fiscales:** borrar el primer libro de compras (15/10–31/10) y el libro de ventas «PRUEBA»; corregir los RIF «VFalse» (NANTONG, FARMERS) antes de confirmar; crear los libros de la 1.ª quincena de octubre si se declara desde Odoo.
+
+**Contabilidad y configuración**
 - **H1:** asignar cuenta de gastos `5.1.01.007` al producto 1319 (o a la categoría GASTOS OTROS). LC/2026/0120 ya usó 5.1.01.007 en su línea, pero el producto sigue sin cuenta.
 - **H2:** crear el costo en destino de la factura C003-00001942.
-- **Planilla en el libro de compras:** los campos Nº planilla / fecha / expediente / «Factura SENIAT» solo aparecen si el proveedor es empresa **PJND**. NANTONG está como persona PNNR y SENIAT como persona PNRE. Probar en staging cómo entra la planilla como «Importación» al libro de compras (o leer el código de `nks_localizacion`).
+- **Planilla en el libro de compras:** los campos Nº planilla / fecha / expediente / «Factura SENIAT» solo aparecen si el proveedor es empresa **PJND**. NANTONG está como persona PNNR y SENIAT como persona PNRE. Probar en staging cómo entra la planilla como «Importación» al libro de compras.
 - Confirmar con Contabilidad que ADEL 1023 y ADEL 1128 son de OC-00916.
 - Ahumado: el costeo dice 18,65 pero con US$ 10.783,79 da 18,6568. Para 18,65 exacto el gasto sería US$ 10.750,00 (requiere otro costo en destino negativo por US$ 33,79).
-- Un costo en destino validado no se cancela: las correcciones van con otro costo en destino (negativo si hay que restar).
+- Configurar el «Diario Asientos de Redondeo» (Contabilidad › Ajustes). Los ajustes de centavos usaron OPERACIONES VARIAS (`8.1.01.0006` y `8.2.01.0007`).
 
-- La empresa no tiene configurado el «Diario Asientos de Redondeo» (Contabilidad › Ajustes). El ajuste de MESAMAR usó OPERACIONES VARIAS y 8.1.01.0006; Contabilidad puede definir un diario y una cuenta propios.
-
-- Corregir los asientos de los 10 pagos con tasa equivocada (relación de pagos del 27/10) y reportar el defecto de reconfirmación a la localización.
-- FACT 1854 de MESAMAR (US$ 237,08): registrar el pago cuando se sepa el diario y la fecha.
-
-- Corregir el doble del Banco del Tesoro y conciliar los 68 cobros de Profit con línea libre en el extracto; cargar extractos de las cuentas en $ y registrar los fondeos de Mercantil Panamá y Amerant.
-- Comisiones: excluir los AJPM del propio vendedor en nks_amv_comisiones y decidir con el cliente diferencial, retenciones y notas de crédito.
+**Desarrollo**
+- **Localización (Eulises):** `force_save` en el período del libro fiscal; tasa del pago al reconfirmar; número de factura en el comprobante de retención; campos de importación solo con PJND. Ver `manuales/incidencias-localizacion/`.
+- **Comisiones:** excluir los AJPM del propio vendedor en `nks_amv_comisiones` y decidir con el cliente diferencial, retenciones y notas de crédito.
 
 ## Lecciones técnicas (Odoo 19 + localización AMV)
-- El comprobante de retención de IVA imprime como número de factura el campo **Referencia** de la factura de proveedor. Al cancelar y regenerar una retención, la localización reutiliza el número asignado (`iva_number_asignado`).
-- Restablecer a borrador y reconfirmar un pago en $ con tasa propia lo recalcula a la BCV (o a otra tasa): para corregir un pago confirmado, anularlo y crear uno nuevo.
-- Facturas con tres decimales en US$ dejan residuos de centavos al pagar (los pagos van a dos decimales); se cierran con un ajuste conciliado.
 
+**Formularios y datos**
 - Abrir un formulario **«Nuevo»** y salir guarda el borrador (pasó con LC/2026/0119). Para capturas, no abrir formularios nuevos.
 - Abrir un **asiento o factura registrada** actualiza su fecha de modificación (recálculo de la localización dual) aunque no cambie nada.
+- Un campo de **solo lectura sin `force_save`** no se guarda aunque un onchange le ponga valor (caso del período del libro fiscal).
+
+**Pagos, conciliación y tasas**
+- Restablecer a borrador y reconfirmar un pago en $ con tasa propia lo recalcula a la BCV (o a otra tasa): para corregir un pago confirmado, anularlo y crear uno nuevo. Los pagos en Bs no tienen ese problema (el monto contable no depende de la tasa).
+- Rehacer por RPC una conciliación de cobro en Bs con factura en US$ usa la BCV de la fecha del cobro, no la tasa del pago; puede dejar centavos en US$ que hay que cerrar.
+- Facturas con tres decimales en US$ dejan residuos de centavos al pagar (los pagos van a dos decimales); se cierran con un ajuste conciliado.
+- Un asiento de diferencia en cambio que está referenciado por una conciliación no se puede pasar a borrador; hay que deshacer la conciliación (Odoo lo revierte) y rehacerla.
+- Un asiento con número de un mes (EXCH/2026/11/…) no se confirma con fecha de otro mes: hay que limpiar el número (`name = '/'`) en borrador para que tome uno nuevo. Al confirmar un par original/reversión, Odoo los vuelve a conciliar solo.
+
+**Fiscal**
+- El comprobante de retención de IVA imprime como número de factura el campo **Referencia** de la factura de proveedor. Al cancelar y regenerar una retención, la localización reutiliza el número asignado (`iva_number_asignado`).
+- Cada factura queda en un solo libro fiscal (`fb_id`); un libro de prueba deja vacío al definitivo.
+
+**Inventario y costos en destino**
 - En Odoo 19 la **orden de compra no tiene botón «Crear factura»** en el formulario: está «Subir factura» (con PDF) y, en la lista, «Crear facturas».
 - En Odoo 19 la valuación y el método de costo se configuran por empresa en Contabilidad › Ajustes; la categoría puede sobrescribirlos.
 - **Compute** en un costo en destino borra los ajustes hechos a mano en «Ajustes de valoración».
@@ -171,4 +197,4 @@ Todo lo demás fue de solo lectura.
 | `pdf.js` | Genera el PDF de un manual desde su `index.html` (rutas internas a ajustar). |
 | `rpc_lectura.py` | Consultas JSON-RPC de solo lectura. Uso: `DB=alimentos-monteverde-main-24467214 P='<clave>' python3 script.py` con `exec(open('rpc_lectura.py')...)`. |
 | `tr.py` | Transcribe audios de WhatsApp con faster-whisper (modelo small, español). Convertir antes con `ffmpeg -i audio.ogg -ar 16000 -ac 1 -f s16le a.raw`. |
-| `historial/` | Scripts que escribieron en producción (borrado de LC 119, ajuste y validación de LC 120), para trazabilidad. No reejecutar. |
+| `historial/` | Scripts que escribieron en producción, para trazabilidad. No reejecutar. LC 119 (`del119.py`), LC 120 (`apply120.py`, `val120.py`), MESAMAR (`fix1891.py`), GRUPO FERREIRA (`fix_ferreira_1..4.py`), fechas 27/11 (`fix2711.py`, `fix2093.py`) y EXCH 29/11 (`fix_exch_activo.py`, `cierre_residuo.py`, `fix_par.py`, `postear_par.py`, `restaurar_par.py`, `fix_refs.py`). |
