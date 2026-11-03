@@ -101,6 +101,12 @@ Reportes de Profit «Comisiones por cobros» 01/10–15/10 de 8 vendedores contr
 - Error de Odoo: comisiona AJPM cuyo cliente es el propio vendedor (Albert 11124, Manuel 11120, María 11121).
 - Entrega: `manuales/comisiones-1er-corte-octubre/` (PDF de 3 páginas + Excel por documento). No se modificó nada.
 
+### 11. Libros fiscales de compras y ventas (03/11)
+- «Actualizar libro» no traía nada: los períodos predefinidos («Quincena anterior», «Último mes»…) calculan las fechas en el onchange, pero `period_start`/`period_end` son de solo lectura sin `force_save` y no se guardan. Solución temporal: «Personalizado» con fechas a mano. Incidencia para Eulises: `manuales/incidencias-localizacion/libro-fiscal-periodo-sin-fechas.md`.
+- El libro es global por compañía (RIF); las sucursales son almacenes (`nks_sucursal_id`). El campo «Diarios» permite libros por sucursal, pero cada factura queda en un solo libro (`fb_id`).
+- Estado al 03/11: José Oria creó los libros definitivos de la 2.ª quincena de octubre (compras 19 facturas, ventas 237, «Personalizado» 16–31/10). Sobran el primer libro de compras (15/10–31/10, 1 factura) y el libro de ventas «PRUEBA» (retiene 155 facturas del 01 al 15/10). En el libro de compras, NANTONG y FARMERS salen con RIF «VFalse».
+- Entrega: `manuales/libros-fiscales/` (instructivo HTML + PDF de 8 páginas con capturas). No se modificó ningún libro.
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
