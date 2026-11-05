@@ -175,6 +175,26 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
   2. Banesco: las 145 líneas duplicadas borradas y el saldo de 1.1.04.001 (20.259.073,59 Bs) para comparar con el banco.
   3. Pendiente: definir el cliente de los depósitos 940036690 y 45317892, y registrar los cobros de CRUDOS por el depósito 20444471393.
 
+### 17. Reposición de arroz Kampos: facturas Profit 10502 y 13259 (05/11)
+- Pedido: entregar un arroz Kampos que se le debe al cliente (FACT 10502: el arroz se devolvió dañado y el cliente no se llevó el reemplazo). En la FACT 13259 un arroz se entrega sin facturarlo. Además, validar si Profit le dio salida.
+- Ninguna de las dos facturas está en Odoo (solo se migraron los saldos abiertos al 30/09). No hay acceso a Profit.
+- Hallazgos de configuración:
+  - Las órdenes de entrega no generan asiento: el costo se registra al facturar. Por eso una entrega sin factura no lleva el costo a contabilidad.
+  - «Muestras y cortesías» manda a una ubicación virtual con cuenta 6.11.01.0005 y genera el asiento STJ al validar.
+  - «Virtual Locations/Scrap» e «Inventory adjustment» no tienen cuenta: los desechos SP/00004 y SP/00005 del 04/11 no generaron asiento.
+- Propuesta: poner en Scrap la cuenta 8.2.01.0006 PÉRDIDA EN MERCANCÍA DAÑADA y entregar con la operación «Muestras y cortesías», con destino Scrap, el cliente y la referencia a la factura de Profit. Antes, confirmar en Profit que no se emitió nota de crédito por la devolución.
+- Se entregó un resumen para el consultor. **No se modificó nada.** Falta la autorización y los datos: sucursal, cliente, cuál arroz y cantidad.
+
+### 18. INVERSIONES SOJA: MERC1/2026/00631 (05/11)
+- Depósito del 08/10, ref. 20418507667, por 206.754,60 Bs. Paga la FACT 19151 (E001-00017172) de US$ 203,90 a 1.014,00 Bs/$ (la BCV del 08/10 era 874,7321).
+- Johana Matute dejó la conciliación a medias el 03/11: había un débito falso de 206.754,60 Bs en la cuenta por cobrar de SOJA, el EXCH/2026/10/2215 y 235.151,32 Bs en la transitoria.
+- Decisión del usuario: tratar el excedente como diferencial, igual que PMERC1/2026/00124 del 22/10 (pagada a 1.003, con EXCH/2026/10/0579).
+- Corrección:
+  - Se deshizo la conciliación a medias; el EXCH/2026/10/2215 lo revirtió el EXCH/2026/10/2421.
+  - La línea del extracto quedó así: Banco 206.754,60 / cuenta por cobrar de SOJA −175.162,93 Bs (−US$ 203,90) / 8.1.01.0004 BENEFICIO EN DIF. CAMBIARIO −31.591,67.
+  - La cuenta por cobrar se concilió con la factura: la factura quedó «Pagada» y la línea del extracto conciliada.
+  - Un primer intento en Bs dejó US$ 3,65 abiertos y creó el EXCH/2026/10/2422. Se deshizo, y el EXCH/2026/10/2423 lo revirtió (los dos suman cero).
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
@@ -189,13 +209,13 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
 | 03/11 | MISC1/2026/10/0002–0006 | 5 depósitos sacados de 1.1.03.001 y conciliados con sus cobros (PMERC1/00423, 00159, 00426, 00425; PBNK2/00118) |
 | 03/11 | APER/2026/10/0001 | Asiento en 0 (CRUDOS) eliminado |
 | 03/11 | Banesco 7128 (estados 27, 35, 41, 42) | 145 líneas duplicadas borradas (19.560.805,23 Bs), 38 movidas a su estado, saldos de los estados reencadenados; OPVAR/2026/10/0179 cierra 0,16 Bs de CHANTILLY |
+| 05/11 | MERC1/2026/00631 (SOJA) | Conciliación rehecha: FACT 19151 pagada, 31.591,67 Bs a 8.1.01.0004; EXCH/2026/10/2215↔2421 y 2422↔2423 revertidos |
 
 Todo lo demás fue de solo lectura.
 
 ## Pendientes
 
 **Datos en producción (necesitan decisión o datos del usuario)**
-- **INVERSIONES SOJA:** corregir MERC1/2026/00631 cuando se decida si los 28.396,72 Bs van a diferencial o a favor del cliente.
 - **FACT 1854 de MESAMAR (US$ 237,08):** registrar el pago cuando se sepa el diario y la fecha.
 - **Banco del Tesoro (doble):** restablecer la línea ref. 122554603 y conciliarla con los cobros PTESUS/2026/00001 y 00002.
 - **68 cobros de Profit** con línea libre en el extracto: conciliar. Cargar extractos de las cuentas en $ y registrar los fondeos de Mercantil Panamá y Amerant.
@@ -203,6 +223,7 @@ Todo lo demás fue de solo lectura.
 - **Libros fiscales:** borrar el primer libro de compras (15/10–31/10) y el libro de ventas «PRUEBA»; corregir los RIF «VFalse» (NANTONG, FARMERS) antes de confirmar; crear los libros de la 1.ª quincena de octubre si se declara desde Odoo.
 
 - **Saldos por identificar:** conciliar 20400501388 con PMERC1/2026/00429 (EUROBUILDING); corregir MISC1/2026/10/0001 (SOJA) y eliminar el borrador sobrante del diario SIN IDENTIFICAR. Los cobros reales de CRUDOS para el depósito 20444471393 (2.513.273 Bs).
+- **Reposición de arroz (FACT Profit 10502 y 13259):** autorizar la cuenta de Scrap y pasar sucursal, cliente, arroz y cantidad.
 - **Banesco 7128:** decidir a qué cliente corresponden los depósitos 940036690 (40.181,54: EMPRENDIMIENTO MORA o CALIENTICOS LECHERIA) y 45317892 (1.144.130: INVERSIONES TOMI o GARY JOSE ALVAREZ). Después: deshacer la conciliación equivocada, borrar su copia del estado 41 y reencadenar los saldos. Comparar el saldo contable de 1.1.04.001 con el banco.
 
 **Contabilidad y configuración**
