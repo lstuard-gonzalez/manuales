@@ -194,6 +194,7 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
   - La línea del extracto quedó así: Banco 206.754,60 / cuenta por cobrar de SOJA −175.162,93 Bs (−US$ 203,90) / 8.1.01.0004 BENEFICIO EN DIF. CAMBIARIO −31.591,67.
   - La cuenta por cobrar se concilió con la factura: la factura quedó «Pagada» y la línea del extracto conciliada.
   - Un primer intento en Bs dejó US$ 3,65 abiertos y creó el EXCH/2026/10/2422. Se deshizo, y el EXCH/2026/10/2423 lo revirtió (los dos suman cero).
+- Se entregó un resumen corto para el consultor (en el chat), con la recomendación de registrar el cobro con la tasa acordada con el cliente (como el 22/10), para que la conciliación no quede a medias.
 
 ## Cambios hechos en producción por Claude
 
