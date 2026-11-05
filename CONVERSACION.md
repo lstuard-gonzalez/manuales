@@ -170,6 +170,10 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
   - Los estados 35, 41 y 42 quedaron encadenados, completos y válidos. Los estados empiezan en 0 el 01/10, así que su saldo no es el del banco.
   - Saldo contable de 1.1.04.001 al 30/10: 20.259.073,59 Bs. Al resolver los 2 pares pendientes quedará en 19.074.762,05 Bs. **Johan debe compararlo con el saldo real de Banesco.**
   - Scripts y registros en `tools/historial/`: fix_ssid.py, fix_aper.py, exec_bnk2.py, exec19.py, chant*.py y *_log.json.
+- Se entregó un resumen corto para el consultor (en el chat), en tres partes:
+  1. Saldos por identificar: los 5 depósitos sacados y APER/2026/10/0001 eliminado.
+  2. Banesco: las 145 líneas duplicadas borradas y el saldo de 1.1.04.001 (20.259.073,59 Bs) para comparar con el banco.
+  3. Pendiente: definir el cliente de los depósitos 940036690 y 45317892, y registrar los cobros de CRUDOS por el depósito 20444471393.
 
 ## Cambios hechos en producción por Claude
 
