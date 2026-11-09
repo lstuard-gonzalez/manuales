@@ -206,9 +206,16 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
 - Hecho:
   - Se desaplicó ese cobro. El EXCH/2026/11/0576 lo revirtió el EXCH/2026/11/0585.
   - Nota de crédito **E002-00005993** (09/11): mismo diario, referencia «Reversión de: E002-00016947, CAMBIO DE NOTA A FACTURA FISCAL», 1 × 566,28 en la 3.9.01.001, tasa 859,0629. Quedó conciliada y la nota pasó a «Revertida».
-- **Pendiente:**
-  - Que facturación emita la factura fiscal con los productos, cantidades y precios de la FACT 38695 (no están en Odoo).
-  - Después, aplicarle el cobro PREGB/2026/00251 (US$ 120,31), que quedó como saldo a favor de Katsuo.
+- El usuario envió los PDF de Profit: la FACT 38695 son dos facturas fiscales del 28/08/2026, ambas a tasa 791,6667:
+  - 00003845, control 8318: US$ 426,71.
+  - 00003846, control 8319: US$ 139,57.
+- Se copió el precedente F002-00039734 / F001-00200061 (factura fiscal de Profit anterior al arranque):
+  - Diario «Saldos iniciales clientes 30/09/2026», fecha 30/09, fecha de factura 28/08, ref. «APER0930 CXC FACT 38695».
+  - Una línea de base por alícuota en la cuenta 3.9.01.001, con su IVA (16 % V y 8 %). Número de control, tasa 791,6667 y nota interna «Factura fiscal …, control … (Profit 38695, nota 16947), 28/08/2026».
+  - Facturas creadas: **F002-00003845** (bases 152,74 al 16 % y 231,05 al 8 %, total 426,71) y **F002-00003846** (base 120,32 al 16 %, total 139,57). Juntas suman los US$ 566,28 de la nota.
+  - Las bases en $ salen de las bases en Bs del PDF divididas entre la tasa. En Bs, el IVA coincide con el impreso con diferencias de 1 a 3 céntimos.
+- La referencia de E002-00005993 se cambió a «Reversión de: E002-00016947, Facturada en fiscal: F002-00003845 y F002-00003846 (28/08)», como en ENC002-00000592.
+- El cobro PREGB/2026/00251 (US$ 120,31) se aplicó a F002-00003846, que quedó con US$ 19,26 abiertos (su IVA; parece una retención del 100 % pendiente). F002-00003845 queda sin pagar (US$ 426,71).
 
 ## Cambios hechos en producción por Claude
 
@@ -225,7 +232,7 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
 | 03/11 | APER/2026/10/0001 | Asiento en 0 (CRUDOS) eliminado |
 | 03/11 | Banesco 7128 (estados 27, 35, 41, 42) | 145 líneas duplicadas borradas (19.560.805,23 Bs), 38 movidas a su estado, saldos de los estados reencadenados; OPVAR/2026/10/0179 cierra 0,16 Bs de CHANTILLY |
 | 05/11 | MERC1/2026/00631 (SOJA) | Conciliación rehecha: FACT 19151 pagada, 31.591,67 Bs a 8.1.01.0004; EXCH/2026/10/2215↔2421 y 2422↔2423 revertidos |
-| 09/11 | E002-00016947 (Katsuo) | Cobro PREGB/2026/00251 desaplicado (EXCH 0576↔0585); nota de crédito E002-00005993 «CAMBIO DE NOTA A FACTURA FISCAL» |
+| 09/11 | E002-00016947 (Katsuo) | Cobro PREGB/2026/00251 desaplicado (EXCH 0576↔0585); nota de crédito E002-00005993; facturas fiscales F002-00003845 y F002-00003846 en saldos iniciales; cobro aplicado a F002-00003846 |
 
 Todo lo demás fue de solo lectura.
 
@@ -239,7 +246,7 @@ Todo lo demás fue de solo lectura.
 - **Libros fiscales:** borrar el primer libro de compras (15/10–31/10) y el libro de ventas «PRUEBA»; corregir los RIF «VFalse» (NANTONG, FARMERS) antes de confirmar; crear los libros de la 1.ª quincena de octubre si se declara desde Odoo.
 
 - **Saldos por identificar:** conciliar 20400501388 con PMERC1/2026/00429 (EUROBUILDING); corregir MISC1/2026/10/0001 (SOJA) y eliminar el borrador sobrante del diario SIN IDENTIFICAR. Los cobros reales de CRUDOS para el depósito 20444471393 (2.513.273 Bs).
-- **E002-00016947 (Katsuo):** emitir la factura fiscal de la FACT 38695 y aplicarle el cobro PREGB/2026/00251 (US$ 120,31).
+- **Katsuo F002-00003846:** quedan US$ 19,26 (su IVA); confirmar si hay comprobante de retención.
 - **Reposición de arroz (FACT Profit 10502 y 13259):** autorizar la cuenta de Scrap y pasar sucursal, cliente, arroz y cantidad.
 - **Banesco 7128:** decidir a qué cliente corresponden los depósitos 940036690 (40.181,54: EMPRENDIMIENTO MORA o CALIENTICOS LECHERIA) y 45317892 (1.144.130: INVERSIONES TOMI o GARY JOSE ALVAREZ). Después: deshacer la conciliación equivocada, borrar su copia del estado 41 y reencadenar los saldos. Comparar el saldo contable de 1.1.04.001 con el banco.
 
