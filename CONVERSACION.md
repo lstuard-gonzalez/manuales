@@ -196,6 +196,20 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
   - Un primer intento en Bs dejó US$ 3,65 abiertos y creó el EXCH/2026/10/2422. Se deshizo, y el EXCH/2026/10/2423 lo revirtió (los dos suman cero).
 - Se entregó un resumen corto para el consultor (en el chat), con la recomendación de registrar el cobro con la tasa acordada con el cliente (como el 22/10), para que la conciliación no quede a medias.
 
+### 19. Nota de Profit a factura fiscal: E002-00016947 (09/11)
+- Pedido: «cámbiala a factura fiscal», copiando exactamente los precedentes.
+- Precedentes encontrados:
+  - **E002-00017621 → E002-00005991 + F002-00004263** (27/10, Katherine Montoya). Nota de crédito en el mismo diario de saldos iniciales no fiscales, con la misma línea (cuenta 3.9.01.001), conciliada con la nota. Después, factura fiscal nueva en FACTURAS SUCURSAL CARACAS con los productos de Profit, IVA y la tasa del día.
+  - E002-00018324 → ENC002-00000616 + F002-00004341 (05 y 06/11).
+  - E002-00016983 → ENC002-00000592, ya facturada en fiscal en Profit.
+- La nota E002-00016947 es la FACT 38695 de Inversiones Katsuo (US$ 566,28). Aribel le había aplicado hoy el cobro PREGB/2026/00251 (US$ 120,31).
+- Hecho:
+  - Se desaplicó ese cobro. El EXCH/2026/11/0576 lo revirtió el EXCH/2026/11/0585.
+  - Nota de crédito **E002-00005993** (09/11): mismo diario, referencia «Reversión de: E002-00016947, CAMBIO DE NOTA A FACTURA FISCAL», 1 × 566,28 en la 3.9.01.001, tasa 859,0629. Quedó conciliada y la nota pasó a «Revertida».
+- **Pendiente:**
+  - Que facturación emita la factura fiscal con los productos, cantidades y precios de la FACT 38695 (no están en Odoo).
+  - Después, aplicarle el cobro PREGB/2026/00251 (US$ 120,31), que quedó como saldo a favor de Katsuo.
+
 ## Cambios hechos en producción por Claude
 
 | Fecha | Registro | Cambio |
@@ -211,6 +225,7 @@ Consulta de solo lectura: los 28 apuntes de octubre en 1.1.03.001 (sin contar la
 | 03/11 | APER/2026/10/0001 | Asiento en 0 (CRUDOS) eliminado |
 | 03/11 | Banesco 7128 (estados 27, 35, 41, 42) | 145 líneas duplicadas borradas (19.560.805,23 Bs), 38 movidas a su estado, saldos de los estados reencadenados; OPVAR/2026/10/0179 cierra 0,16 Bs de CHANTILLY |
 | 05/11 | MERC1/2026/00631 (SOJA) | Conciliación rehecha: FACT 19151 pagada, 31.591,67 Bs a 8.1.01.0004; EXCH/2026/10/2215↔2421 y 2422↔2423 revertidos |
+| 09/11 | E002-00016947 (Katsuo) | Cobro PREGB/2026/00251 desaplicado (EXCH 0576↔0585); nota de crédito E002-00005993 «CAMBIO DE NOTA A FACTURA FISCAL» |
 
 Todo lo demás fue de solo lectura.
 
@@ -224,6 +239,7 @@ Todo lo demás fue de solo lectura.
 - **Libros fiscales:** borrar el primer libro de compras (15/10–31/10) y el libro de ventas «PRUEBA»; corregir los RIF «VFalse» (NANTONG, FARMERS) antes de confirmar; crear los libros de la 1.ª quincena de octubre si se declara desde Odoo.
 
 - **Saldos por identificar:** conciliar 20400501388 con PMERC1/2026/00429 (EUROBUILDING); corregir MISC1/2026/10/0001 (SOJA) y eliminar el borrador sobrante del diario SIN IDENTIFICAR. Los cobros reales de CRUDOS para el depósito 20444471393 (2.513.273 Bs).
+- **E002-00016947 (Katsuo):** emitir la factura fiscal de la FACT 38695 y aplicarle el cobro PREGB/2026/00251 (US$ 120,31).
 - **Reposición de arroz (FACT Profit 10502 y 13259):** autorizar la cuenta de Scrap y pasar sucursal, cliente, arroz y cantidad.
 - **Banesco 7128:** decidir a qué cliente corresponden los depósitos 940036690 (40.181,54: EMPRENDIMIENTO MORA o CALIENTICOS LECHERIA) y 45317892 (1.144.130: INVERSIONES TOMI o GARY JOSE ALVAREZ). Después: deshacer la conciliación equivocada, borrar su copia del estado 41 y reencadenar los saldos. Comparar el saldo contable de 1.1.04.001 con el banco.
 
